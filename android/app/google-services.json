@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "93826281798",
+    "project_id": "chatex-f5fe9",
+    "storage_bucket": "chatex-f5fe9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93826281798:android:cc4b2ade7e289b7ab4f547",
+        "android_client_info": {
+          "package_name": "app.netlify.prudhvisuraaj.chat_room"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93826281798-ir97mc0p4pvr34kr85eg293mthtfbluv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1j_1Xd6devv1_tZRLELnR8ax1KbPTI3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93826281798-ir97mc0p4pvr34kr85eg293mthtfbluv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
