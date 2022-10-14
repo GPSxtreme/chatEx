@@ -23,7 +23,7 @@ class _loginScreenState extends State<loginScreen> {
   String email = '';
   bool showLoader = false;
   final _auth = FirebaseAuth.instance;
-  void showSnackBar(String txt,double fontSize){
+  void showSnackBar(String txt){
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: SizedBox(
@@ -141,11 +141,11 @@ class _loginScreenState extends State<loginScreen> {
                                 setState(() {
                                   showLoader = false;
                                 });
-                                showSnackBar(e.message.toString(), 12);
+                                showSnackBar(e.message.toString());
                               }
                           }
                           else{
-                            showSnackBar('Please fill in all fields!!',17);
+                            showSnackBar('Please fill in all fields!!');
                           }
                         },),
                       ],

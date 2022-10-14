@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,23 +25,24 @@ class _regScreenState extends State<regScreen> {
   final _auth = FirebaseAuth.instance;
   bool showLoader = false;
 
-  void showSnackBar(String txt,double fontSize){
+  void showSnackBar(String txt){
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
-            children: [
-              Text(txt,style:GoogleFonts.poppins(
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width*0.80,
+            child: AutoSizeText(txt,
+              style:GoogleFonts.poppins(
                 color: Colors.white,
-                fontSize: fontSize,
                 fontWeight: FontWeight.w400,
-              ))
-            ],
+              ),
+              maxLines: 2,
+            ),
           ),
           backgroundColor: Colors.red,
           shape: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 4),
         ));
   }
   @override
@@ -152,13 +154,13 @@ class _regScreenState extends State<regScreen> {
                                 setState(() {
                                   showLoader = false;
                                 });
-                                showSnackBar(e.message.toString(), 12);
+                                showSnackBar(e.message.toString());
                               }
                             }else{
-                              showSnackBar('Passwords do not match',17);
+                              showSnackBar('Passwords do not match');
                             }
                           }else{
-                            showSnackBar('Please fill in all fields!!',17);
+                            showSnackBar('Please fill in all fields!!');
                           }
                         },),
                       ],
