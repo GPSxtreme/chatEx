@@ -13,15 +13,14 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 class regScreen extends StatefulWidget {
   static String id = 'reg_screen';
   regScreen({Key? key}) : super(key: key);
-  final _auth = FirebaseAuth.instance;
   @override
   State<regScreen> createState() => _regScreenState();
 }
 
 class _regScreenState extends State<regScreen> {
-  late String password;
-  late String rePassword;
-  late String email;
+  String password = '';
+  String rePassword= '';
+  String email = '';
   final _auth = FirebaseAuth.instance;
   bool showLoader = false;
 
@@ -50,6 +49,7 @@ class _regScreenState extends State<regScreen> {
     return Scaffold(
       backgroundColor: HexColor("#090909"),
       body: ModalProgressHUD(
+        opacity: 0.18,
         inAsyncCall: showLoader,
         child: Center(
             child:SingleChildScrollView(
@@ -135,7 +135,7 @@ class _regScreenState extends State<regScreen> {
                           height: 40,
                         ),
                         roundedBtn(title: 'Login', onPressed: () async {
-                          if(password != null && rePassword != null && email != null){
+                          if(password.isNotEmpty && rePassword.isNotEmpty && email.isNotEmpty){
                             if(password == rePassword && (password.length >= 6)){
                               setState(() {
                                 showLoader = true;
@@ -149,6 +149,9 @@ class _regScreenState extends State<regScreen> {
                                   Navigator.pushNamed(context, chatScreen.id);
                                 }
                               } on FirebaseAuthException catch  (e) {
+                                setState(() {
+                                  showLoader = false;
+                                });
                                 showSnackBar(e.message.toString(), 12);
                               }
                             }else{
