@@ -21,3 +21,4 @@ const kTextFieldInputDecoration = InputDecoration(
         borderSide: BorderSide(color: Colors.orangeAccent,width: 2.0),
     ),
 );
+const kMsgContainerDecoration = null;
