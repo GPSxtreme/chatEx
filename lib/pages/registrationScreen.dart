@@ -25,26 +25,7 @@ class _regScreenState extends State<regScreen> {
   final _auth = FirebaseAuth.instance;
   bool showLoader = false;
 
-  void showSnackBar(String txt){
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width*0.80,
-            child: AutoSizeText(txt,
-              style:GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w400,
-              ),
-              maxLines: 2,
-            ),
-          ),
-          backgroundColor: Colors.red,
-          shape: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          duration: const Duration(seconds: 4),
-        ));
-  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -154,13 +135,13 @@ class _regScreenState extends State<regScreen> {
                                 setState(() {
                                   showLoader = false;
                                 });
-                                showSnackBar(e.message.toString());
+                                showSnackBar(context,e.message.toString(),2000);
                               }
                             }else{
-                              showSnackBar('Passwords do not match');
+                              showSnackBar(context,'Passwords do not match',2000);
                             }
                           }else{
-                            showSnackBar('Please fill in all fields!!');
+                            showSnackBar(context,'Please fill in all fields!!',2000);
                           }
                         },),
                       ],

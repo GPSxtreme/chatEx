@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 
@@ -21,4 +23,40 @@ const kTextFieldInputDecoration = InputDecoration(
         borderSide: BorderSide(color: Colors.orangeAccent,width: 2.0),
     ),
 );
-const kMsgContainerDecoration = null;
+InputDecoration kMsgInputContainerDecoration = InputDecoration(
+    hintText: 'Type your message here...',
+    hintStyle: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w400),
+    border: const OutlineInputBorder(
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.white,width: 2.0),
+    ),
+    enabledBorder: const OutlineInputBorder(
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.white,width: 2.0),
+    ),
+    focusedBorder: const OutlineInputBorder(
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.amber,width: 2.0),
+    ),
+);
+
+void showSnackBar(BuildContext buildContext ,String txt, int duration){
+    ScaffoldMessenger.of(buildContext).showSnackBar(
+        SnackBar(
+            content: SizedBox(
+                width: MediaQuery.of(buildContext).size.width*0.80,
+                child: AutoSizeText(txt,
+                    style:GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 2,
+                ),
+            ),
+            backgroundColor: Colors.red,
+            shape: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            duration: Duration(milliseconds: duration),
+        ));
+}

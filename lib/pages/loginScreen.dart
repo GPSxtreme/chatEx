@@ -23,26 +23,6 @@ class _loginScreenState extends State<loginScreen> {
   String email = '';
   bool showLoader = false;
   final _auth = FirebaseAuth.instance;
-  void showSnackBar(String txt){
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width*0.80,
-            child: AutoSizeText(txt,
-              style:GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w400,
-              ),
-              maxLines: 2,
-            ),
-          ),
-          backgroundColor: Colors.red,
-          shape: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          duration: const Duration(seconds: 4),
-        ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +121,11 @@ class _loginScreenState extends State<loginScreen> {
                                 setState(() {
                                   showLoader = false;
                                 });
-                                showSnackBar(e.message.toString());
+                                showSnackBar(context,e.message.toString(),3000);
                               }
                           }
                           else{
-                            showSnackBar('Please fill in all fields!!');
+                            showSnackBar(context,'Please fill in all fields!!',3000);
                           }
                         },),
                       ],
