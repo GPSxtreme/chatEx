@@ -57,7 +57,7 @@ popOutOfContext(){
 }
 userLogOut(){
   _auth.signOut();
-  Navigator.pop(context);
+  Navigator.popAndPushNamed(context, welcomeScreen.id);
 }
 
     @override
