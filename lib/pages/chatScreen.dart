@@ -62,77 +62,80 @@ userLogOut(){
 
     @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black12,
-      appBar: AppBar(
-        title: Text('Chat Room',style: GoogleFonts.poppins(),),
-        backgroundColor: Colors.white24,
-        elevation: 5,
-        actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: Colors.black26
-            ),
-            child:  Row(
-                children:[
-                  if(loggedUser.email == "prudhvisuraaj@gmail.com") ...[
-                    TextButton(onPressed: () {
-                      showDialogBox(
+    return WillPopScope(
+        onWillPop: ()async=>false,
+      child: Scaffold(
+        backgroundColor: Colors.black12,
+        appBar: AppBar(
+          title: Text('Chat Room',style: GoogleFonts.poppins(),),
+          backgroundColor: Colors.white24,
+          elevation: 5,
+          actions: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.black26
+              ),
+              child:  Row(
+                  children:[
+                    if(loggedUser.email == "prudhvisuraaj@gmail.com") ...[
+                      TextButton(onPressed: () {
+                        showDialogBox(
                           context,
                           'DELETE ALL MESSAGES?',
                           "This process is permanent and cannot be undone",
                           Colors.red,
-                        superUserDelAllMsg,
-                        popOutOfContext,
+                          superUserDelAllMsg,
+                          popOutOfContext,
+                        );
+                      }, child: const Icon(Ionicons.trash_bin,color: Colors.red,size: 25,)),
+                    ],
+                    TextButton(onPressed: (){
+                      showDialogBox(
+                          context,
+                          'Log Out?',
+                          "You can login again by entering your credentials.",
+                          Colors.red,
+                          userLogOut,
+                          popOutOfContext
                       );
-                    }, child: const Icon(Ionicons.trash_bin,color: Colors.red,size: 25,)),
-                  ],
-                  TextButton(onPressed: (){
-                    showDialogBox(
-                      context,
-                      'Log Out?',
-                      "You can login again by entering your credentials.",
-                      Colors.red,
-                      userLogOut,
-                      popOutOfContext
-                    );
-                  }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 25,)),
-                  TextButton(onPressed: (){
-                    showSnackBar(context, 'Coming soon under progress :)', 2200);
-                  },
+                    }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 25,)),
+                    TextButton(onPressed: (){
+                      showSnackBar(context, 'Coming soon under progress :)', 2200);
+                    },
                       child: const Icon(Ionicons.settings_outline,color: Colors.red,size: 25,),
-                  )
-                ]
+                    )
+                  ]
+              ),
             ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const SizedBox(height: 20,),
-            Expanded(
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(height: 20,),
+              Expanded(
                 child: Column(
-                  children: const [
-                    MessageStream()
-                ]
+                    children: const [
+                      MessageStream()
+                    ]
                 ),
               ),
-            // Expanded(child: Container()),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(width: 10,),
-                Expanded(
+              // Expanded(child: Container()),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 10,),
+                  Expanded(
                     child: buildTextField(context),
-                ),
-              ],
-            )
-          ],
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
