@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chat_room/consts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:intl/intl.dart';
@@ -42,20 +43,70 @@ class _chatScreenState extends State<chatScreen> {
       print(e);
     }
   }
-  @override
+
+ superUserDelAllMsg () async {
+    final messages = await _fireStore.collection('messages').get();
+    final docs = messages.docs;
+    for(var doc in docs){
+      _fireStore.collection('messages').doc(doc.id).delete();
+    }
+    Navigator.of(context).pop();
+}
+popOutOfContext(){
+  Navigator.of(context).pop();
+}
+userLogOut(){
+  _auth.signOut();
+  Navigator.pop(context);
+}
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black12,
       appBar: AppBar(
         title: Text('Chat Room',style: GoogleFonts.poppins(),),
-        centerTitle: true,
         backgroundColor: Colors.white24,
         elevation: 5,
         actions: [
-          TextButton(onPressed: (){
-            _auth.signOut();
-            Navigator.pop(context);
-          }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 40,))
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              color: Colors.black26
+            ),
+            child:  Row(
+                children:[
+                  if(loggedUser.email == "prudhvisuraaj@gmail.com") ...[
+                    TextButton(onPressed: () {
+                      showDialogBox(
+                          context,
+                          'DELETE ALL MESSAGES?',
+                          "This process is permanent and cannot be undone",
+                          Colors.red,
+                        superUserDelAllMsg,
+                        popOutOfContext,
+                      );
+                    }, child: const Icon(Ionicons.trash_bin,color: Colors.red,size: 25,)),
+                  ],
+                  TextButton(onPressed: (){
+                    showDialogBox(
+                      context,
+                      'Log Out?',
+                      "You can login again by entering your credentials.",
+                      Colors.red,
+                      userLogOut,
+                      popOutOfContext
+                    );
+                  }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 25,)),
+                  TextButton(onPressed: (){
+                    showSnackBar(context, 'Coming soon under progress :)', 2200);
+                  },
+                      child: const Icon(Ionicons.settings_outline,color: Colors.red,size: 25,),
+                  )
+                ]
+            ),
+          ),
         ],
       ),
       body: SafeArea(
@@ -63,7 +114,7 @@ class _chatScreenState extends State<chatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Expanded(
                 child: Column(
                   children: const [
@@ -75,38 +126,10 @@ class _chatScreenState extends State<chatScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(width: 10,),
+                const SizedBox(width: 10,),
                 Expanded(
-                    child: TextField(
-                      controller: msgTextController,
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      decoration: kMsgInputContainerDecoration,
-                      onChanged: (value){
-                        msgTxt = value;
-                      }
-                    )
+                    child: buildTextField(context),
                 ),
-                IconButton(onPressed: (){
-                    final now = DateTime.now();
-                    String formatter = DateFormat.yMd().add_jm().format(now);
-                    final sortTime = Timestamp.now();
-                  if(msgTxt.isNotEmpty){
-                    msgTextController.clear();
-                    _fireStore.collection("messages").add({
-                      'text':msgTxt,
-                      'sender':loggedUser.email,
-                      'createdAt': formatter,
-                      'timeSort':sortTime
-                    });
-                  }
-                  else{
-                    showSnackBar(context,'Please fill in a message',1100);
-                  }
-                }, icon: const Icon(Icons.send,color: Colors.white,size: 30,))
               ],
             )
           ],
@@ -114,8 +137,45 @@ class _chatScreenState extends State<chatScreen> {
       ),
     );
   }
-}
 
+
+
+  //TextField chat screen
+  TextField buildTextField(BuildContext context) {
+    return TextField(
+    controller: msgTextController,
+      style: GoogleFonts.poppins(
+        color: Colors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+      ),
+      decoration: kMsgInputContainerDecoration.copyWith(
+          suffixIcon: IconButton(onPressed: (){
+            final now = DateTime.now();
+            String formatter = DateFormat.yMd().add_jm().format(now);
+            final sortTime = Timestamp.now();
+            if(msgTxt.isNotEmpty){
+              msgTextController.clear();
+              _fireStore.collection("messages").add({
+                'text':msgTxt,
+                'sender':loggedUser.email,
+                'createdAt': formatter,
+                'timeSort':sortTime
+              });
+            }
+            else{
+              showSnackBar(context,'Please fill in a message',1100);
+            }
+          }, icon: const Icon(Icons.send,color: Colors.blue,size: 30,)
+          )
+      ),
+    onChanged: (value){
+      msgTxt = value;
+    },
+  );
+  }
+}
+//message fetching service
 class MessageStream extends StatelessWidget {
   const MessageStream({Key? key}) : super(key: key);
 
@@ -131,7 +191,7 @@ class MessageStream extends StatelessWidget {
               final msgSender = message.get('sender');
               final msgTxt = message.get('text');
               final msgTime = message.get('createdAt');
-              messageWidgets.add(MessageBubble(sender: msgSender, text: msgTxt,isMe:msgSender == loggedUser.email,time: msgTime,));
+              messageWidgets.add(MessageBubble(sender: msgSender, text: msgTxt,isMe:msgSender == loggedUser.email,time: msgTime,msgId: message.id,));
             }
             return Expanded(
               child: ListView(
@@ -149,47 +209,63 @@ class MessageStream extends StatelessWidget {
   }
 }
 
+//message bubble
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.sender,required this.text,required this.isMe,required this.time});
+  const MessageBubble({super.key, required this.sender,required this.text,required this.isMe,required this.time,required this.msgId});
   final String sender;
   final String text;
   final bool isMe;
   final String time;
+  final String msgId;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: isMe ? CrossAxisAlignment.end:CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
         children: [
-          const SizedBox(height: 5,),
-          Material(
-            // borderRadius: BorderRadius.circular(4.0),
-            borderRadius: isMe ? const BorderRadius.only(topLeft: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)): const BorderRadius.only(topRight: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)) ,
-            elevation: 5.0,
-            color: Colors.white24,
-            child: Container(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.7),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(sender.split('@')[0],style:  TextStyle(color: isMe ? Colors.lightBlue:Colors.amberAccent,fontSize: 13,decoration: TextDecoration.underline),),
-                    SizedBox(height: 5,),
-                    Text(
-                      text,
-                      style: const TextStyle(color: Colors.white,fontSize: 15),
-                    ),
-                  ],
-                ),
-              ),
+          if(isMe) ...[
+            TextButton(onPressed: (){
+              _fireStore.collection("messages").doc(msgId).delete();
+            },
+                child: const Icon(Ionicons.trash_bin,size: 25,color: Colors.red,)
             )
+          ],
+          Column(
+            mainAxisAlignment: isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
+            children: [
+              Material(
+                borderRadius: isMe ? const BorderRadius.only(topLeft: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)): const BorderRadius.only(topRight: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)) ,
+                elevation: 5.0,
+                color: Colors.white24,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.75),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if(!isMe) ...[
+                          Text(sender.split('@')[0],style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),),
+                          const SizedBox(height: 5,),
+                        ],
+                        Text(
+                          text,
+                          style:GoogleFonts.poppins(
+                            fontSize: 17,
+                            color: Colors.white
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ),
+              const SizedBox(height: 4,),
+              Text(time.substring(11),style: const TextStyle(color: Colors.white,fontSize: 12,fontStyle: FontStyle.italic),),
+            ],
           ),
-          SizedBox(height: 4,),
-          Text(time,style: const TextStyle(color: Colors.white,fontSize: 10,fontStyle: FontStyle.italic),),
-
         ],
       ),
     );

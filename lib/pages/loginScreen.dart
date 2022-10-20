@@ -46,8 +46,7 @@ class _loginScreenState extends State<loginScreen> {
                         size: 60,
                       ),
                       SizedBox(width: size.width*0.03,),
-                      SizedBox(
-                        width: size.width*0.70,
+                      Flexible(
                         child: AnimatedTextKit(
                           animatedTexts: [
                             TypewriterAnimatedText(

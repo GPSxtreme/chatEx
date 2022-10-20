@@ -137,10 +137,12 @@ class _regScreenState extends State<regScreen> {
                                 });
                                 showSnackBar(context,e.message.toString(),2000);
                               }
-                            }else{
-                              showSnackBar(context,'Passwords do not match',2000);
                             }
-                          }else{
+                            else{
+                              showSnackBar(context,'Password should be longer than 6 characters',2000);
+                            }
+                          }
+                          else{
                             showSnackBar(context,'Please fill in all fields!!',2000);
                           }
                         },),

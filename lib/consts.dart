@@ -24,19 +24,21 @@ const kTextFieldInputDecoration = InputDecoration(
     ),
 );
 InputDecoration kMsgInputContainerDecoration = InputDecoration(
+    filled: true,
+    fillColor: HexColor("2e2e2e"),
     hintText: 'Type your message here...',
-    hintStyle: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w400),
+    hintStyle: GoogleFonts.poppins(color: Colors.white70,fontWeight: FontWeight.w400),
     border: const OutlineInputBorder(
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(color: Colors.white,width: 2.0),
+        borderRadius: BorderRadius.all(Radius.circular(28)),
+        borderSide: BorderSide(color: Colors.white30,width: 2.0),
     ),
     enabledBorder: const OutlineInputBorder(
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(color: Colors.white,width: 2.0),
+        borderRadius: BorderRadius.all(Radius.circular(28)),
+        borderSide: BorderSide(color: Colors.white30,width: 2.0),
     ),
     focusedBorder: const OutlineInputBorder(
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(color: Colors.amber,width: 2.0),
+        borderRadius: BorderRadius.all(Radius.circular(28)),
+        borderSide: BorderSide(color: Colors.white30,width: 2.0),
     ),
 );
 
@@ -59,4 +61,30 @@ void showSnackBar(BuildContext buildContext ,String txt, int duration){
             ),
             duration: Duration(milliseconds: duration),
         ));
+}
+
+//alertBox
+Future showDialogBox(BuildContext context, title,String msg,Color titleColor,void Function()? yes,void Function()? no){
+    return showDialog(context: context,
+        builder: (BuildContext context){
+            return AlertDialog(
+                elevation: 5,
+                backgroundColor: HexColor("#3f434a"),
+                title: Text(title,style: TextStyle(color: titleColor,fontWeight: FontWeight.bold,),),
+                content: SingleChildScrollView(
+                    child: ListBody(
+                        children:  [
+                            Text(msg,style: const TextStyle(color: Colors.white))
+                        ],
+                    ),
+                ),
+                actions: [
+                    TextButton(onPressed: yes,
+                        child: const Text('Yes',style: TextStyle(color: Colors.white),)),
+                    TextButton(onPressed: no,
+                        child: const Text('No',style: TextStyle(color: Colors.white),)),
+                ],
+            );
+        }
+    );
 }
