@@ -1,17 +1,12 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_room/pages/chatScreen.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:chat_room/pages/registrationScreen.dart';
-import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:chat_room/pages/profile.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:sizer/sizer.dart';
-import 'package:chat_room/consts.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import '../components/roundedBtnT1.dart';
 import 'package:chat_room/main.dart';
 class welcomeScreen extends StatefulWidget {

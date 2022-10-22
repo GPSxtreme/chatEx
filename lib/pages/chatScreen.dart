@@ -25,6 +25,7 @@ class _chatScreenState extends State<chatScreen> {
   final msgTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   String msgTxt = '';
+  late final userDetails;
   @override
   void initState() {
     // TODO: implement initState
@@ -32,12 +33,13 @@ class _chatScreenState extends State<chatScreen> {
     getCurrentUser();
   }
 
-  void getCurrentUser (){
+  void getCurrentUser ()async {
     try{
       final user =  _auth.currentUser;
       if(user!=null){
         loggedUser = user;
       }
+      userDetails = await _fireStore.collection('users').doc(loggedUser.uid).get();
     }
     catch(e){
       print(e);
@@ -161,7 +163,8 @@ userLogOut(){
               msgTextController.clear();
               _fireStore.collection("messages").add({
                 'text':msgTxt,
-                'sender':loggedUser.email,
+                'senderEmail':loggedUser.email,
+                'senderUserName':userDetails['UserName'],
                 'createdAt': formatter,
                 'timeSort':sortTime
               });
@@ -191,10 +194,11 @@ class MessageStream extends StatelessWidget {
             final messages = snapshot.data?.docs.reversed;
             List<MessageBubble> messageWidgets = [];
             for(var message in messages!){
-              final msgSender = message.get('sender');
+              final msgSenderEmail = message.get('senderEmail');
+              final msgSenderUserName = message.get('senderUserName');
               final msgTxt = message.get('text');
               final msgTime = message.get('createdAt');
-              messageWidgets.add(MessageBubble(sender: msgSender, text: msgTxt,isMe:msgSender == loggedUser.email,time: msgTime,msgId: message.id,));
+              messageWidgets.add(MessageBubble(senderEmail: msgSenderEmail,senderUserName: msgSenderUserName ,text: msgTxt,isMe:msgSenderEmail == loggedUser.email,time: msgTime,msgId: message.id,));
             }
             return Expanded(
               child: ListView(
@@ -214,8 +218,9 @@ class MessageStream extends StatelessWidget {
 
 //message bubble
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.sender,required this.text,required this.isMe,required this.time,required this.msgId});
-  final String sender;
+  const MessageBubble({super.key, required this.senderEmail,required this.senderUserName, required this.text,required this.isMe,required this.time,required this.msgId});
+  final String senderEmail;
+  final String senderUserName;
   final String text;
   final bool isMe;
   final String time;
@@ -250,7 +255,7 @@ class MessageBubble extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if(!isMe) ...[
-                          Text(sender.split('@')[0],style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),),
+                          Text(senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),),
                           const SizedBox(height: 5,),
                         ],
                         Text(

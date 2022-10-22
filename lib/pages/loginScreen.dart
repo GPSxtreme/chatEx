@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chat_room/pages/chatScreen.dart';
+import 'package:chat_room/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -9,6 +10,8 @@ import '../components/roundedBtnT1.dart';
 import '../consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class loginScreen extends StatefulWidget {
   loginScreen({Key? key}) : super(key: key);
@@ -22,8 +25,9 @@ class _loginScreenState extends State<loginScreen> {
   String password = '';
   String email = '';
   bool showLoader = false;
+  late bool userProfileCreated;
   final _auth = FirebaseAuth.instance;
-
+  final _fireStore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -110,11 +114,18 @@ class _loginScreenState extends State<loginScreen> {
                               });
                               try{
                                 final newUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
+                                final loggedUser = _auth.currentUser;
+                                var doc = await _fireStore.collection('users').doc(loggedUser?.uid).get();
                                 if(newUser != null){
                                   setState(() {
                                     showLoader = false;
                                   });
-                                  Navigator.pushNamed(context, chatScreen.id);
+                                  if(doc.exists){
+                                    Navigator.pushNamed(context, chatScreen.id);
+                                  }
+                                  else{
+                                    Navigator.pushNamed(context, profile.id);
+                                  }
                                 }
                               } on FirebaseAuthException catch  (e) {
                                 setState(() {
