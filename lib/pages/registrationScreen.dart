@@ -1,6 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:chat_room/pages/profile.dart';
+import 'package:chat_room/pages/profileCreate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -129,7 +129,7 @@ class _regScreenState extends State<regScreen> {
                                   setState(() {
                                     showLoader = false;
                                   });
-                                  Navigator.pushNamed(context, profile.id);
+                                  Navigator.pushNamed(context, profileCreate.id);
                                 }
                               } on FirebaseAuthException catch  (e) {
                                 setState(() {

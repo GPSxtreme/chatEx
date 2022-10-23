@@ -11,15 +11,15 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 
-class profile extends StatefulWidget {
-  static String id = "profile_Screen";
-  const profile({Key? key}) : super(key: key);
+class profileCreate extends StatefulWidget {
+  static String id = "profileCreate_Screen";
+  const profileCreate({Key? key}) : super(key: key);
 
   @override
-  State<profile> createState() => _profileState();
+  State<profileCreate> createState() => _profileState();
 }
 
-class _profileState extends State<profile> {
+class _profileState extends State<profileCreate> {
 
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
@@ -153,7 +153,7 @@ class _profileState extends State<profile> {
                           height: 40,
                         ),
                         roundedBtn(title: 'Finish', onPressed: () {
-                          if(userName.isNotEmpty && phoneNumber.isNotEmpty && phoneNumber.length == 10){
+                          if(userName.isNotEmpty && phoneNumber.isNotEmpty && phoneNumber.length == 10 && about.isNotEmpty){
                             setState(() {
                               showLoader = true;
                             });
@@ -171,13 +171,13 @@ class _profileState extends State<profile> {
                               });
                               showSnackBar(context,e.message.toString(),2000);
                             }
-                          }else if (phoneNumber.length != 10){
-                            showSnackBar(context,'Please enter a valid phone number',2000);
                           }
-                          else{
+                          else if(userName.isEmpty || phoneNumber.isEmpty || about.isEmpty){
                             showSnackBar(context,'Please fill in all the fields',2000);
                           }
-
+                          else if (phoneNumber.length != 10 && (userName.isNotEmpty && phoneNumber.isNotEmpty && about.isNotEmpty)){
+                          showSnackBar(context,'Please enter a valid phone number',2000);
+                          }
                         }),
                       ],
                     ),
