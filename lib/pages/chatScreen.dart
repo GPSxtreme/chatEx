@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chat_room/pages/profileUser.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -163,6 +164,7 @@ userLogOut(){
               msgTextController.clear();
               _fireStore.collection("messages").add({
                 'text':msgTxt,
+                'senderUid':loggedUser.uid,
                 'senderEmail':loggedUser.email,
                 'senderUserName':userDetails['UserName'],
                 'createdAt': formatter,
@@ -194,11 +196,11 @@ class MessageStream extends StatelessWidget {
             final messages = snapshot.data?.docs.reversed;
             List<MessageBubble> messageWidgets = [];
             for(var message in messages!){
-              final msgSenderEmail = message.get('senderEmail');
+              final msgSenderUid = message.get('senderUid');
               final msgSenderUserName = message.get('senderUserName');
               final msgTxt = message.get('text');
               final msgTime = message.get('createdAt');
-              messageWidgets.add(MessageBubble(senderEmail: msgSenderEmail,senderUserName: msgSenderUserName ,text: msgTxt,isMe:msgSenderEmail == loggedUser.email,time: msgTime,msgId: message.id,));
+              messageWidgets.add(MessageBubble(senderUid: msgSenderUid,senderUserName: msgSenderUserName ,text: msgTxt,isMe:msgSenderUid == loggedUser.uid,time: msgTime,msgId: message.id,));
             }
             return Expanded(
               child: ListView(
@@ -218,8 +220,8 @@ class MessageStream extends StatelessWidget {
 
 //message bubble
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.senderEmail,required this.senderUserName, required this.text,required this.isMe,required this.time,required this.msgId});
-  final String senderEmail;
+  const MessageBubble({super.key, required this.senderUid,required this.senderUserName, required this.text,required this.isMe,required this.time,required this.msgId});
+  final String senderUid;
   final String senderUserName;
   final String text;
   final bool isMe;
@@ -255,7 +257,12 @@ class MessageBubble extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if(!isMe) ...[
-                          Text(senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),),
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pushReplacementNamed(context, profileUser.id,arguments: {"senderUid":senderUid});
+                            },
+                              child: Text(senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),)
+                          ),
                           const SizedBox(height: 5,),
                         ],
                         Text(
