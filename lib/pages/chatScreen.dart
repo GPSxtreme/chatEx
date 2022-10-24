@@ -70,6 +70,7 @@ userLogOut(){
       child: Scaffold(
         backgroundColor: Colors.black12,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text('Chat Room',style: GoogleFonts.poppins(),),
           backgroundColor: Colors.white24,
           elevation: 5,
