@@ -55,6 +55,12 @@ class _profileUserState extends State<profileUser> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.white,
+                          backgroundImage: NetworkImage(data['profileImgLink']),
+                        ),
+                        const SizedBox(height: 30,),
                         Text("Email:${data["email"]}",style:const TextStyle(color: Colors.white,fontSize: 20)),
                         Text("User name:${data["UserName"]}",style:const TextStyle(color: Colors.white,fontSize: 20)),
                         Text("Phone number:${data["PhoneNumber"]}",style:const TextStyle(color: Colors.white,fontSize: 20)),

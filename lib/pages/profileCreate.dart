@@ -9,7 +9,10 @@ import 'package:chat_room/consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class profileCreate extends StatefulWidget {
   static String id = "profileCreate_Screen";
@@ -29,7 +32,7 @@ class _profileState extends State<profileCreate> {
   String about = '';
   String? userUid;
   late User loggedUser;
-  bool animFinished = false;
+  String imageUrl = " ";
   @override
   void initState() {
     // TODO: implement initState
@@ -48,7 +51,27 @@ class _profileState extends State<profileCreate> {
       print(e);
     }
   }
-
+  void pickUploadImage() async{
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      imageQuality: 75
+    );
+    setState(() {
+      showLoader = true;
+    });
+    Reference ref = FirebaseStorage.instance.ref().child("userProfilePictures/${loggedUser.uid}.jpg");
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then(
+        (val){
+          setState(() {
+            imageUrl = val;
+          });
+        }
+    );
+    setState(() {
+      showLoader = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -67,20 +90,22 @@ class _profileState extends State<profileCreate> {
                     children: [
                       SizedBox(
                         width: size.width*0.70,
-                        child: AnimatedTextKit(
-                          animatedTexts: [
-                            TypewriterAnimatedText(
-                              'Welcome!',
-                              textStyle: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 47,
-                                fontWeight: FontWeight.w600,
+                        child: Center(
+                          child: AnimatedTextKit(
+                            animatedTexts: [
+                              TypewriterAnimatedText(
+                                'Welcome!',
+                                textStyle: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                speed: const Duration(milliseconds: 300),
                               ),
-                              speed: const Duration(milliseconds: 300),
-                            ),
-                          ],
-                          pause: const Duration(milliseconds: 4000),
-                          repeatForever: true,
+                            ],
+                            pause: const Duration(milliseconds: 4000),
+                            repeatForever: true,
+                          ),
                         ),
                       ),
                       SizedBox(height: 10,),
@@ -88,17 +113,36 @@ class _profileState extends State<profileCreate> {
                         'Complete your profile.',
                         style: GoogleFonts.poppins(
                           color: Colors.white,
-                          fontSize: 27,
+                          fontSize: 22,
                           fontWeight: FontWeight.w600,)
                       ),
                     ],
                   ),
+                  SizedBox(height: 10,),
+                  GestureDetector(
+                    onTap: pickUploadImage,
+                    child: imageUrl == " " ? CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.white,
+                      child:  Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Ionicons.camera_outline,size: 40,color: Colors.black,),
+                            Text("choose",style:GoogleFonts.poppins(color: Colors.black,fontSize:12),)
+                          ],
+                        ),
+                    ) : CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(imageUrl),
+                    )
+                  ),
                   Container(
-                    margin: EdgeInsets.all(30),
+                    margin: EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: 40,
+                        const SizedBox(
+                          height: 20,
                         ),
                         TextField(
                           style: GoogleFonts.poppins(
@@ -149,9 +193,6 @@ class _profileState extends State<profileCreate> {
                         SizedBox(
                           height: 20,
                         ),
-                        SizedBox(
-                          height: 40,
-                        ),
                         roundedBtn(title: 'Finish', onPressed: () {
                           if(userName.isNotEmpty && phoneNumber.isNotEmpty && phoneNumber.length == 10 && about.isNotEmpty){
                             setState(() {
@@ -162,7 +203,8 @@ class _profileState extends State<profileCreate> {
                                 "email": loggedUser.email,
                                 "UserName": userName,
                                 "PhoneNumber": phoneNumber,
-                                "about":about
+                                "about":about,
+                                "profileImgLink":imageUrl
                               });
                               Navigator.pushNamed(context, chatScreen.id);
                             }on FirebaseAuthException catch  (e) {
