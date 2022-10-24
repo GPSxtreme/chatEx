@@ -11,6 +11,7 @@ void main()=>{runApp(
     ResponsiveSizer(
       builder: ((context, orientation, deviceType) {
         return   MaterialApp(
+          theme: ThemeData.dark(),
           debugShowCheckedModeBanner: false,
           initialRoute: welcomeScreen.id,
           routes: {
