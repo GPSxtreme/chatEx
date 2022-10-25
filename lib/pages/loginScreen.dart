@@ -11,7 +11,7 @@ import '../consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class loginScreen extends StatefulWidget {
   loginScreen({Key? key}) : super(key: key);
@@ -116,16 +116,18 @@ class _loginScreenState extends State<loginScreen> {
                                 final newUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
                                 final loggedUser = _auth.currentUser;
                                 var doc = await _fireStore.collection('users').doc(loggedUser?.uid).get();
-                                if(newUser != null){
-                                  setState(() {
-                                    showLoader = false;
-                                  });
-                                  if(doc.exists){
-                                    Navigator.pushNamed(context, chatScreen.id);
-                                  }
-                                  else{
-                                    Navigator.pushNamed(context, profileCreate.id);
-                                  }
+                                final fcmToken = await FirebaseMessaging.instance.getToken();
+                                _fireStore.collection('users').doc(loggedUser!.uid).update({
+                                  "fcmToken":fcmToken
+                                });
+                                setState(() {
+                                  showLoader = false;
+                                });
+                                if(doc.exists){
+                                  Navigator.pushNamed(context, chatScreen.id);
+                                }
+                                else{
+                                  Navigator.pushNamed(context, profileCreate.id);
                                 }
                               } on FirebaseAuthException catch  (e) {
                                 setState(() {

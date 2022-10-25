@@ -1,5 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.netlify.prudhvisuraaj.chat_room">
+<!--    prevent fcm token auto initialisation-->
+    <meta-data
+        android:name="firebase_messaging_auto_init_enabled"
+        android:value="false" />
+    <meta-data
+        android:name="firebase_analytics_collection_enabled"
+        android:value="false" />
+<!--    till here-->
    <application
         android:label="chat_room"
         android:name="${applicationName}"
@@ -44,4 +52,5 @@
             <data android:scheme="tel" />
         </intent>
     </queries>
+
 </manifest>
