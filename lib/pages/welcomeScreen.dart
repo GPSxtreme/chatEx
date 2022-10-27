@@ -1,5 +1,4 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:chat_room/pages/registrationScreen.dart';
@@ -18,13 +17,6 @@ class welcomeScreen extends StatefulWidget {
 }
 
 class _welcomeScreenState extends State<welcomeScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Firebase.initializeApp();
-  }
-
   @override
 
   Widget build(BuildContext context) {

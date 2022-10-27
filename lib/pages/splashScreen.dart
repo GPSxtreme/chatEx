@@ -1,5 +1,7 @@
 import 'package:chat_room/pages/chatScreen.dart';
+import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    coRoutine();
+  }
+  void coRoutine()async{
     bool isLoggedIn = FirebaseAuth.instance.currentUser != null ? true : false;
-    Future.delayed(const Duration(milliseconds: 1800) , (){
+    final _fireStore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    final loggedUser = _auth.currentUser;
+    Future.delayed(const Duration(milliseconds: 1800) , () async {
       if(isLoggedIn){
-        Navigator.popAndPushNamed(context, chatScreen.id);
+        final userDetails = await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
+        Navigator.popAndPushNamed(context, MainScreen.id,arguments: {"img":userDetails["profileImgLink"] ,"name":userDetails["UserName"],"email":userDetails["email"],"phNo":userDetails["PhoneNumber"],"uid":loggedUser?.uid});
       }else{
         Navigator.popAndPushNamed(context, welcomeScreen.id);
       }

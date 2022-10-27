@@ -84,7 +84,7 @@ class _regScreenState extends State<regScreen> {
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.emailAddress,
                           onChanged: (value){email = value;},
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your email",labelText: "Email:"),
+                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your email",labelText: "Email",prefixIcon: const Icon(Icons.email,color: Colors.white,)),
                         ),
                         SizedBox(
                           height: 20,
@@ -98,7 +98,7 @@ class _regScreenState extends State<regScreen> {
                           ),
                           textAlign: TextAlign.center,
                           onChanged: (value){ password = value; },
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your password",labelText: "Password:"),
+                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your password",labelText: "Password",prefixIcon: const Icon(Icons.lock,color: Colors.white,)),
                         ),
                         SizedBox(
                           height: 20,
@@ -112,7 +112,7 @@ class _regScreenState extends State<regScreen> {
                           ),
                           textAlign: TextAlign.center,
                           onChanged: (value){rePassword = value;},
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Re-enter your password",labelText: "Re-enter password:",labelStyle: const TextStyle(fontSize: 15,color: Colors.white),hintStyle: const TextStyle(fontSize: 15,color: Colors.white)),
+                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Re-enter your password",labelText: "Re-enter password",labelStyle: const TextStyle(fontSize: 15,color: Colors.white),hintStyle: const TextStyle(fontSize: 15,color: Colors.white)),
                         ),
                         SizedBox(
                           height: 40,

@@ -8,15 +8,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 
-class profileUser extends StatefulWidget {
+class profileUserShow extends StatefulWidget {
   static String id = 'profileUser_screen';
-  const profileUser({Key? key}) : super(key: key);
+  const profileUserShow({Key? key}) : super(key: key);
 
   @override
-  State<profileUser> createState() => _profileUserState();
+  State<profileUserShow> createState() => _profileUserShowState();
 }
 
-class _profileUserState extends State<profileUser> {
+class _profileUserShowState extends State<profileUserShow> {
   Map data = {};
   final _fireStore = FirebaseFirestore.instance;
 
@@ -35,7 +35,7 @@ class _profileUserState extends State<profileUser> {
               color: Colors.white,
             ),
             onPressed: (){
-              Navigator.of(context).pushNamed(chatScreen.id);
+              Navigator.of(context).pop();
             },
           ),
 

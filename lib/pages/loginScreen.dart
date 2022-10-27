@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chat_room/pages/chatScreen.dart';
+import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileCreate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -85,7 +86,7 @@ class _loginScreenState extends State<loginScreen> {
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.emailAddress,
                           onChanged: (value){email = value;},
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your email",labelText: "Email:"),
+                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your email",labelText: "Email",prefixIcon: const Icon(Icons.email,color: Colors.white,)),
                         ),
                         SizedBox(
                           height: 20,
@@ -99,7 +100,7 @@ class _loginScreenState extends State<loginScreen> {
                           ),
                           textAlign: TextAlign.center,
                           onChanged: (value){ password = value; },
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your password",labelText: "Password:"),
+                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your password",labelText: "Password",prefixIcon: const Icon(Icons.lock,color: Colors.white,)),
                         ),
                         SizedBox(
                           height: 20,
@@ -124,7 +125,7 @@ class _loginScreenState extends State<loginScreen> {
                                   showLoader = false;
                                 });
                                 if(doc.exists){
-                                  Navigator.pushNamed(context, chatScreen.id);
+                                  Navigator.pushNamed(context, MainScreen.id);
                                 }
                                 else{
                                   Navigator.pushNamed(context, profileCreate.id);
