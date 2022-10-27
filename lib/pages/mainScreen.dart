@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               ListTile(
                 onTap: (){
-                  Navigator.pushReplacementNamed(context, profileUserShow.id,arguments: {"senderUid":data['uid']});
+                  Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":data['uid']});
                 },
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
                 leading: const Icon(Icons.person,color: Colors.white24,size: 30,),

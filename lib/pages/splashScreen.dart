@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(milliseconds: 1800) , () async {
       if(isLoggedIn){
         final userDetails = await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
-        Navigator.popAndPushNamed(context, MainScreen.id,arguments: {"img":userDetails["profileImgLink"] ,"name":userDetails["UserName"],"email":userDetails["email"],"phNo":userDetails["PhoneNumber"],"uid":loggedUser?.uid});
+        Navigator.popAndPushNamed(context, MainScreen.id,arguments: {"img":userDetails["profileImgLink"] ,"name":userDetails["userName"],"email":userDetails["email"],"phNo":userDetails["phoneNumber"],"uid":loggedUser?.uid});
       }else{
         Navigator.popAndPushNamed(context, welcomeScreen.id);
       }
