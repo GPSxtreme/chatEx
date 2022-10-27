@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 final _fireStore = FirebaseFirestore.instance;
 late User loggedUser;
+late String grpId;
 
 class chatScreen extends StatefulWidget {
   chatScreen({Key? key}) : super(key: key);
@@ -23,10 +24,12 @@ class chatScreen extends StatefulWidget {
 }
 
 class _chatScreenState extends State<chatScreen> {
+  Map data = {};
   final msgTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   String msgTxt = '';
-  late final userDetails;
+  dynamic userDetails = {};
+  bool _isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
@@ -41,6 +44,9 @@ class _chatScreenState extends State<chatScreen> {
         loggedUser = user;
       }
       userDetails = await _fireStore.collection('users').doc(loggedUser.uid).get();
+      setState(() {
+        _isLoading = false;
+      });
     }
     catch(e){
       print(e);
@@ -65,10 +71,12 @@ userLogOut(){
 
     @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      data = data.isNotEmpty? data: ModalRoute.of(context)?.settings.arguments as Map;
+      grpId = data['groupId'];
+      return _isLoading ? ModalProgressHUD(inAsyncCall: true, child:Container(color: Colors.black,) ) :Scaffold(
       backgroundColor: Colors.black12,
       appBar: AppBar(
-        title: Text('Chat Room',style: GoogleFonts.poppins(),),
+        title: Text(data["groupName"],style: GoogleFonts.poppins(),),
         backgroundColor: Colors.white24,
         elevation: 5,
         actions: [
@@ -80,7 +88,7 @@ userLogOut(){
             ),
             child:  Row(
                 children:[
-                  if(loggedUser.email == "prudhvisuraaj@gmail.com") ...[
+                  if(userDetails["userName"] == data["createdBy"]) ...[
                     TextButton(onPressed: () {
                       showDialogBox(
                         context,
@@ -159,11 +167,11 @@ userLogOut(){
             final sortTime = Timestamp.now();
             if(msgTxt.isNotEmpty){
               msgTextController.clear();
-              _fireStore.collection("messages").add({
+              _fireStore.collection("groups").doc(data["groupId"]).collection("messages").add({
                 'text':msgTxt,
                 'senderUid':loggedUser.uid,
                 'senderEmail':loggedUser.email,
-                'senderUserName':userDetails['UserName'],
+                'senderUserName':userDetails['userName'],
                 'createdAt': formatter,
                 'timeSort':sortTime
               });
@@ -187,7 +195,7 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: _fireStore.collection('messages').orderBy('timeSort').snapshots(),
+        stream: _fireStore.collection("groups").doc(grpId).collection("messages").orderBy('timeSort').snapshots(),
         builder: (context,snapshot){
           if(snapshot.hasData){
             final messages = snapshot.data?.docs.reversed;
@@ -234,7 +242,7 @@ class MessageBubble extends StatelessWidget {
         children: [
           if(isMe) ...[
             TextButton(onPressed: (){
-              _fireStore.collection("messages").doc(msgId).delete();
+              _fireStore.collection("groups").doc(grpId).collection("messages").doc(msgId).delete();
             },
                 child: const Icon(Ionicons.trash_bin,size: 25,color: Colors.red,)
             )

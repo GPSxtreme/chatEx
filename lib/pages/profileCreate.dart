@@ -1,3 +1,4 @@
+import 'package:chat_room/authService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -201,12 +202,13 @@ class _profileState extends State<profileCreate> {
                             try{
                               _fireStore.collection("users").doc(loggedUser.uid).set({
                                 "email": loggedUser.email,
-                                "UserName": userName,
-                                "PhoneNumber": phoneNumber,
+                                "userName": userName,
+                                "joinedGroups":FieldValue.arrayUnion([]),
+                                "phoneNumber": phoneNumber,
                                 "about":about,
-                                "profileImgLink":imageUrl
+                                "profileImgLink":imageUrl,
                               });
-                              Navigator.pushNamed(context, chatScreen.id);
+                              AuthService.pushMainScreenRoutine(context);
                             }on FirebaseAuthException catch  (e) {
                               setState(() {
                                 showLoader = false;

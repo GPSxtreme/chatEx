@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:chat_room/authService.dart';
 
 class SplashScreen extends StatefulWidget {
   static String id = "splash_screen";
@@ -25,13 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   void coRoutine()async{
     bool isLoggedIn = FirebaseAuth.instance.currentUser != null ? true : false;
-    final _fireStore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-    final loggedUser = _auth.currentUser;
+    print(isLoggedIn);
     Future.delayed(const Duration(milliseconds: 1800) , () async {
       if(isLoggedIn){
-        final userDetails = await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
-        Navigator.popAndPushNamed(context, MainScreen.id,arguments: {"img":userDetails["profileImgLink"] ,"name":userDetails["userName"],"email":userDetails["email"],"phNo":userDetails["phoneNumber"],"uid":loggedUser?.uid});
+        AuthService.pushMainScreenRoutine(context);
       }else{
         Navigator.popAndPushNamed(context, welcomeScreen.id);
       }

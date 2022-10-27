@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:chat_room/authService.dart';
 import 'package:chat_room/pages/chatScreen.dart';
 import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileCreate.dart';
@@ -115,17 +116,12 @@ class _loginScreenState extends State<loginScreen> {
                               });
                               try{
                                 final newUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
-                                final loggedUser = _auth.currentUser;
-                                var doc = await _fireStore.collection('users').doc(loggedUser?.uid).get();
-                                final fcmToken = await FirebaseMessaging.instance.getToken();
-                                _fireStore.collection('users').doc(loggedUser!.uid).update({
-                                  "fcmToken":fcmToken
-                                });
+                                final bool exists = await AuthService.addFcmTokenToLoggedUser();
                                 setState(() {
                                   showLoader = false;
                                 });
-                                if(doc.exists){
-                                  Navigator.pushNamed(context, MainScreen.id);
+                                if(exists){
+                                  AuthService.pushMainScreenRoutine(context);
                                 }
                                 else{
                                   Navigator.pushNamed(context, profileCreate.id);

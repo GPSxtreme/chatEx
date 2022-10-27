@@ -2,12 +2,10 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:chat_room/pages/registrationScreen.dart';
-import 'package:chat_room/pages/profileCreate.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import '../components/roundedBtnT1.dart';
-import 'package:chat_room/main.dart';
 class welcomeScreen extends StatefulWidget {
   static String id = 'welcome_screen';
   welcomeScreen({Key? key}) : super(key: key);
