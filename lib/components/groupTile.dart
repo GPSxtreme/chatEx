@@ -42,7 +42,7 @@ class _GroupTileState extends State<GroupTile> {
           leading: CircleAvatar(
             radius: 25,
             backgroundColor: Colors.white,
-            child: Text(name.substring(0,1).toUpperCase()),
+            child: const Text("temp"),
           ),
           title:Text(name,style: GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
           subtitle:Text("Admin: $by",style: GoogleFonts.poppins(color: Colors.white,fontSize: 15),),

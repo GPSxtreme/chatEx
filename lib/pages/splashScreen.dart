@@ -26,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   void coRoutine()async{
     bool isLoggedIn = FirebaseAuth.instance.currentUser != null ? true : false;
-    print(isLoggedIn);
     Future.delayed(const Duration(milliseconds: 1800) , () async {
       if(isLoggedIn){
         AuthService.pushMainScreenRoutine(context);

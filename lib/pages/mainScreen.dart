@@ -10,6 +10,9 @@ import  'package:chat_room/consts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:chat_room/components/groupTile.dart';
 
+
+//global variables
+
 class MainScreen extends StatefulWidget {
   static String id = "main_screen";
   const MainScreen({Key? key}) : super(key: key);
@@ -24,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   final _auth = FirebaseAuth.instance;
   late final userDetails;
   late final userChats;
-  bool isLoading = false;
+  bool isGrpCreateLoading = false;
   Stream? groups;
   String groupName = "";
   final groupNameTextController = TextEditingController();
@@ -55,7 +58,6 @@ class _MainScreenState extends State<MainScreen> {
     _auth.signOut();
     Navigator.popAndPushNamed(context, welcomeScreen.id);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +130,12 @@ class _MainScreenState extends State<MainScreen> {
         ),
         body : groupList(),
         floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add,color: Colors.black,size: 40,),
           elevation: 0,
           backgroundColor: Colors.white,
           onPressed: (){
             popUpDialog(context);
           },
+          child: const Icon(Icons.add,color: Colors.black,size: 40,),
         ),
       ),
     );
@@ -156,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                isLoading ? const Center(child: CircularProgressIndicator(color:Colors.white),):
+                isGrpCreateLoading ? const Center(child: CircularProgressIndicator(color:Colors.white),):
                     TextField(
                       keyboardType: TextInputType.text,
                       controller: groupNameTextController,
@@ -203,12 +205,12 @@ class _MainScreenState extends State<MainScreen> {
                 ElevatedButton(onPressed: (){
                   if(groupName.isNotEmpty){
                     setState(() {
-                      isLoading = true;
+                      isGrpCreateLoading = true;
                     });
                     groupNameTextController.clear();
                     DatabaseService.addNewGroup(groupName, data['name'],loggedUser.uid);
                     setState(() {
-                      isLoading = false;
+                      isGrpCreateLoading = false;
                     });
                     Navigator.of(context).pop();
                   }
@@ -238,6 +240,8 @@ class _MainScreenState extends State<MainScreen> {
               return ListView.builder(
                 itemCount: snapshot.data['joinedGroups'].length,
                 itemBuilder: (context,index){
+                  if(index == snapshot.data['joinedGroups'].length){
+                  }
                   return GroupTile(groupId: snapshot.data["joinedGroups"][index]);
                 },
               );
