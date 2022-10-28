@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import '../components/roundedBtnT1.dart';
-import 'chatScreen.dart';
 import 'package:chat_room/consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -109,7 +108,7 @@ class _profileState extends State<profileCreate> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
                       Text(
                         'Complete your profile.',
                         style: GoogleFonts.poppins(
@@ -119,7 +118,7 @@ class _profileState extends State<profileCreate> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   GestureDetector(
                     onTap: pickUploadImage,
                     child: imageUrl == " " ? CircleAvatar(
@@ -139,7 +138,7 @@ class _profileState extends State<profileCreate> {
                     )
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       children: [
                         const SizedBox(
@@ -158,7 +157,7 @@ class _profileState extends State<profileCreate> {
                           },
                           decoration: kTextFieldInputDecoration.copyWith(hintText: "set a username",labelText: "Username"),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         TextField(
@@ -174,7 +173,7 @@ class _profileState extends State<profileCreate> {
                           },
                           decoration: kTextFieldInputDecoration.copyWith(hintText: "",labelText: "Phone number"),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         TextField(
@@ -191,7 +190,7 @@ class _profileState extends State<profileCreate> {
                           },
                           decoration: kTextFieldInputDecoration.copyWith(hintText: "Eg: Iam a student studying in...",labelText: "About",),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         roundedBtn(title: 'Finish', onPressed: () {

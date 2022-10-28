@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,22 +55,26 @@ class _chatScreenState extends State<chatScreen> {
   }
 
  superUserDelAllMsg () async {
-    final messages = await _fireStore.collection('messages').get();
+    final messages = await _fireStore.collection("groups").doc(data["groupId"]).collection("messages").get();
     final docs = messages.docs;
     for(var doc in docs){
-      _fireStore.collection('messages').doc(doc.id).delete();
+      _fireStore.collection("groups").doc(data["groupId"]).collection("messages").doc(doc.id).delete();
     }
     Navigator.of(context).pop();
 }
 popOutOfContext(){
   Navigator.of(context).pop();
 }
-userLogOut(){
-  _auth.signOut();
-  Navigator.popAndPushNamed(context, welcomeScreen.id);
+leaveGroup()async{
+    final ins = await _fireStore.collection("users").doc(loggedUser.uid).update({
+      "joinedGroups":FieldValue.arrayRemove([data["groupId"]])
+    });
+    final nav = Navigator.of(context);
+    nav.pop();
+    nav.pop();
 }
 
-    @override
+  @override
   Widget build(BuildContext context) {
       data = data.isNotEmpty? data: ModalRoute.of(context)?.settings.arguments as Map;
       grpId = data['groupId'];
@@ -103,17 +108,17 @@ userLogOut(){
                   TextButton(onPressed: (){
                     showDialogBox(
                         context,
-                        'Log Out?',
-                        "You can login again by entering your credentials.",
+                        'Leave Group?',
+                        "You can join the group again.",
                         Colors.red,
-                        userLogOut,
+                        leaveGroup,
                         popOutOfContext
                     );
                   }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 25,)),
                   TextButton(onPressed: (){
                     showSnackBar(context, 'Coming soon under progress :)', 2200);
                   },
-                    child: const Icon(Ionicons.settings_outline,color: Colors.red,size: 25,),
+                    child: const Icon(Ionicons.information_circle_outline,color: Colors.red,size: 25,),
                   )
                 ]
             ),

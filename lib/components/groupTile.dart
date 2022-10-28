@@ -27,6 +27,7 @@ class _GroupTileState extends State<GroupTile> {
     setState(() {
       name = grpDetails["name"];
       by = grpDetails["createdBy"];
+      grpIcon = grpDetails["groupIcon"];
     });
   }
   @override
@@ -39,13 +40,16 @@ class _GroupTileState extends State<GroupTile> {
           Navigator.pushNamed(context, chatScreen.id,arguments: {"groupId":widget.groupId,"groupName":name,"createdBy":by});
         },
         child: ListTile(
-          leading: CircleAvatar(
+          leading: grpIcon != "" ?CircleAvatar(
             radius: 25,
             backgroundColor: Colors.white,
-            child: const Text("temp"),
-          ),
+            backgroundImage: NetworkImage(grpIcon)
+          ):const CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white,
+              child: CircularProgressIndicator(color: Colors.blue,strokeWidth: 15,),),
           title:Text(name,style: GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
-          subtitle:Text("Admin: $by",style: GoogleFonts.poppins(color: Colors.white,fontSize: 15),),
+          subtitle:Text("Created by: $by",style: GoogleFonts.poppins(color: Colors.white,fontSize: 12),),
         ),
       )
     );

@@ -2,6 +2,7 @@ import 'package:chat_room/pages/chatScreen.dart';
 import 'package:chat_room/pages/databaseService.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import  'package:cloud_firestore/cloud_firestore.dart';
@@ -9,9 +10,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import  'package:chat_room/consts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:chat_room/components/groupTile.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:ionicons/ionicons.dart';
 
 
 //global variables
+String imageUrl = " ";
 
 class MainScreen extends StatefulWidget {
   static String id = "main_screen";
@@ -34,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     getCurrentUser();
   }
@@ -58,6 +64,7 @@ class _MainScreenState extends State<MainScreen> {
     _auth.signOut();
     Navigator.popAndPushNamed(context, welcomeScreen.id);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: HexColor("#3d3d3d"),
           title: Text(
             "Create a group",
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(color: Colors.white),
           ),
           content: SingleChildScrollView(
@@ -159,30 +166,36 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 isGrpCreateLoading ? const Center(child: CircularProgressIndicator(color:Colors.white),):
-                    TextField(
-                      keyboardType: TextInputType.text,
-                      controller: groupNameTextController,
-                      cursorColor: Colors.white,
-                      onChanged: (val){
-                        setState(() {
-                          groupName = val;
-                        });
-                      },
-                      style: GoogleFonts.poppins(color: Colors.white),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(6),
+                    Column(
+                      children: [
+                        const PickDpCircularAvatar(),
+                        const SizedBox(height: 20,),
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          controller: groupNameTextController,
+                          cursorColor: Colors.white,
+                          onChanged: (val){
+                            setState(() {
+                              groupName = val;
+                            });
+                          },
+                          style: GoogleFonts.poppins(color: Colors.white),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(6),
+                              )
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(6),
-                          )
-                      ),
+                        ),
+                      ],
                     ),
               ],
             ),
@@ -195,6 +208,9 @@ class _MainScreenState extends State<MainScreen> {
                 ElevatedButton(
                     onPressed: (){
                       Navigator.of(context).pop();
+                      setState(() {
+                        imageUrl = "";
+                      });
                 },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black
@@ -203,19 +219,20 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 const SizedBox(width: 20,),
                 ElevatedButton(onPressed: (){
-                  if(groupName.isNotEmpty){
+                  if(groupName.isNotEmpty && imageUrl != ""){
                     setState(() {
                       isGrpCreateLoading = true;
                     });
                     groupNameTextController.clear();
-                    DatabaseService.addNewGroup(groupName, data['name'],loggedUser.uid);
+                    DatabaseService.addNewGroup(groupName, data['name'],loggedUser.uid,imageUrl);
                     setState(() {
                       isGrpCreateLoading = false;
+                      imageUrl = "";
                     });
                     Navigator.of(context).pop();
                   }
                   else{
-                    showSnackBar(context,"please enter a group name",2000);
+                    showSnackBar(context,"please provide all fields.",2000);
                   }
 
                 },
@@ -280,3 +297,56 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+class PickDpCircularAvatar extends StatefulWidget {
+  const PickDpCircularAvatar({Key? key}) : super(key: key);
+
+  @override
+  State<PickDpCircularAvatar> createState() => _PickDpCircularAvatarState();
+}
+
+class _PickDpCircularAvatarState extends State<PickDpCircularAvatar> {
+  bool showLoader = false;
+  void pickUploadImage() async{
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 50
+    );
+    setState(() {
+      showLoader = true;
+    });
+    Reference ref = FirebaseStorage.instance.ref().child("groupProfilePictures/${loggedUser.uid}.jpg");
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then(
+            (val){
+          setState(() {
+            imageUrl = val;
+          });
+        }
+    );
+    setState(() {
+      showLoader = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: pickUploadImage,
+        child: imageUrl == "" ? CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.white,
+          child:  Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Ionicons.camera_outline,size: 40,color: Colors.black,),
+              Text("choose",style:GoogleFonts.poppins(color: Colors.black,fontSize:12),)
+            ],
+          ),
+        ) : CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.white,
+          backgroundImage: NetworkImage(imageUrl),
+        )
+    );
+  }
+}

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService{
-  static void addNewGroup(String name,String createdBy,String uid)async{
+  static void addNewGroup(String name,String createdBy,String uid,String grpIcon)async{
     final _fireStore = FirebaseFirestore.instance;
     final now = DateTime.now();
     String date = DateFormat.yMd().add_jm().format(now);
@@ -12,7 +12,7 @@ class DatabaseService{
       "name":name,
       "createdDate":date,
       "groupId":"",
-      "groupIcon":"",
+      "groupIcon":grpIcon,
       "members":FieldValue.arrayUnion([createdBy]),
     }).then((docRef){
       _fireStore.collection("groups").doc(docRef.id).update({
