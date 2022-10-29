@@ -1,14 +1,9 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
-import 'package:chat_room/pages/welcomeScreen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chat_room/consts.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:intl/intl.dart';
@@ -82,14 +77,14 @@ leaveGroup()async{
       backgroundColor: Colors.black12,
       appBar: AppBar(
         title: Text(data["groupName"],style: GoogleFonts.poppins(),),
-        backgroundColor: Colors.white24,
+        backgroundColor: Colors.black12,
         elevation: 5,
         actions: [
           Container(
             margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
-                color: Colors.black26
+                color: Colors.white24
             ),
             child:  Row(
                 children:[

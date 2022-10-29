@@ -33,19 +33,20 @@ class _GroupTileState extends State<GroupTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
-      padding:const EdgeInsets.symmetric(vertical: 20),
+      color: Colors.transparent,
+      padding:const EdgeInsets.symmetric(vertical: 10),
       child: GestureDetector(
         onTap: (){
           Navigator.pushNamed(context, chatScreen.id,arguments: {"groupId":widget.groupId,"groupName":name,"createdBy":by});
         },
         child: ListTile(
+          visualDensity: const VisualDensity(horizontal: 0,vertical: -1),
           leading: grpIcon != "" ?CircleAvatar(
             radius: 25,
             backgroundColor: Colors.white,
             backgroundImage: NetworkImage(grpIcon)
           ):const CircleAvatar(
-              radius: 25,
+              radius: 35,
               backgroundColor: Colors.white,
               child: CircularProgressIndicator(color: Colors.blue,strokeWidth: 15,),),
           title:Text(name,style: GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
