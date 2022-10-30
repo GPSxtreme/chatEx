@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'components/groupCreatePopUp.dart';
 
 
 const kTextFieldInputDecoration = InputDecoration(
@@ -88,5 +89,16 @@ Future showDialogBox(BuildContext context, title,String msg,Color titleColor,voi
         }
     );
 }
-
-//theme colors
+class HelperFunctions{
+    //contains helper functions
+    static popUpGrpCreateDialog(BuildContext context,String userName,String userUid){
+        showDialog(
+            barrierColor: Colors.black54,
+            barrierDismissible: false,
+            context: context,
+            builder: (context){
+                return GroupCreatePopUp(userName: userName,userUid: userUid);
+            }
+        );
+    }
+}

@@ -26,7 +26,7 @@ class _profileUserShowState extends State<profileUserShow> {
     return Scaffold(
       appBar: AppBar(
         title: Text("User Profile",style: GoogleFonts.poppins(color: Colors.white),),
-        backgroundColor: Colors.white24,
+        backgroundColor: Colors.black12,
       ),
       backgroundColor: Colors.black,
       body: Center(
