@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chat_room/consts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:intl/intl.dart';
@@ -223,9 +224,8 @@ class MessageStream extends StatelessWidget {
   }
 }
 
-//message bubble
-class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.senderUid,required this.senderUserName, required this.text,required this.isMe,required this.time,required this.msgId});
+class MessageBubble extends StatefulWidget {
+  const MessageBubble({Key? key, required this.senderUid, required this.senderUserName, required this.text, required this.isMe, required this.time, required this.msgId}) : super(key: key);
   final String senderUid;
   final String senderUserName;
   final String text;
@@ -234,59 +234,88 @@ class MessageBubble extends StatelessWidget {
   final String msgId;
 
   @override
+  State<MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
+  bool isSelected = false;
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
-        children: [
-          if(isMe) ...[
-            TextButton(onPressed: (){
-              _fireStore.collection("groups").doc(grpId).collection("messages").doc(msgId).delete();
-            },
-                child: const Icon(Ionicons.trash_bin,size: 25,color: Colors.red,)
-            )
-          ],
-          Column(
-            mainAxisAlignment: isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
-            children: [
-              Material(
-                borderRadius: isMe ? const BorderRadius.only(topLeft: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)): const BorderRadius.only(topRight: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)) ,
-                elevation: 5.0,
-                color: Colors.white24,
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.75),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if(!isMe) ...[
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.pushReplacementNamed(context, profileUserShow.id,arguments: {"senderUid":senderUid});
-                            },
-                              child: Text(senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),)
-                          ),
-                          const SizedBox(height: 5,),
-                        ],
-                        Text(
-                          text,
-                          style:GoogleFonts.poppins(
-                            fontSize: 17,
-                            color: Colors.white
-                          ),
-                        ),
-                      ],
-                    ),
+    return GestureDetector(
+      onLongPress: (){
+        setState(() {
+          isSelected = true;
+        });
+      },
+      onLongPressCancel: (){
+        if(isSelected){
+          setState(() {
+            isSelected = false;
+          });
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.red:Colors.transparent ,
+        ),
+        child: Row(
+          mainAxisAlignment: widget.isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if(widget.isMe && isSelected) ...[
+              Column(
+                children: [
+                  TextButton(onPressed: (){
+                    _fireStore.collection("groups").doc(grpId).collection("messages").doc(widget.msgId).delete();
+                  },
+                      child: const Icon(Icons.delete,size: 35,color: Colors.black54,)
                   ),
-                )
-              ),
-              const SizedBox(height: 4,),
-              Text(time.substring(11),style: const TextStyle(color: Colors.white,fontSize: 12,fontStyle: FontStyle.italic),),
+                  const SizedBox(height: 15,),
+                ],
+              )
             ],
-          ),
-        ],
+            Column(
+              mainAxisAlignment: widget.isMe ? MainAxisAlignment.end:MainAxisAlignment.start,
+              children: [
+                Material(
+                    borderRadius: widget.isMe ? const BorderRadius.only(topLeft: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)): const BorderRadius.only(topRight: Radius.circular(10),bottomLeft:Radius.circular(10),bottomRight: Radius.circular(10)) ,
+                    elevation: 5.0,
+                    color: HexColor("#3d3d3d"),
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.75),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if(!widget.isMe) ...[
+                              GestureDetector(
+                                  onTap: (){
+                                    Navigator.pushReplacementNamed(context, profileUserShow.id,arguments: {"senderUid":widget.senderUid});
+                                  },
+                                  child: Text(widget.senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),)
+                              ),
+                              const SizedBox(height: 5,),
+                            ],
+                            Text(
+                              widget.text,
+                              style:GoogleFonts.poppins(
+                                  fontSize: 17,
+                                  color: Colors.white
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                ),
+                const SizedBox(height: 4,),
+                Text(widget.time.substring(11),style: const TextStyle(color: Colors.white,fontSize: 12),),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
