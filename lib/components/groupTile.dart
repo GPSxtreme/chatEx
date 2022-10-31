@@ -21,7 +21,7 @@ class _GroupTileState extends State<GroupTile> {
     super.initState();
     getGroupDetails();
   }
-  void getGroupDetails()async{
+  void getGroupDetails() async{
     final _fireStore = FirebaseFirestore.instance;
     final grpDetails = await _fireStore.collection("groups").doc(widget.groupId).get();
     setState(() {

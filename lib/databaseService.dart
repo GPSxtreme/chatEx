@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService{
@@ -23,5 +24,27 @@ class DatabaseService{
       });
       }
     );
+  }
+  static Future<bool> isUserAlreadyInGrp(String grpId)async{
+    final _fireStore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    final userDetails = await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
+    for(var grp in userDetails["joinedGroups"]){
+      if(grp == grpId){
+        return true;
+      }
+    }
+    return false;
+  }
+  static void addUserToGroup(String grpId)async{
+    final _fireStore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    final userDetails = await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
+    await _fireStore.collection("users").doc(_auth.currentUser?.uid).update({
+      "joinedGroups":FieldValue.arrayUnion([grpId])
+    });
+    await _fireStore.collection("groups").doc(grpId).update({
+      "members":FieldValue.arrayUnion([userDetails["userName"]])
+    });
   }
 }

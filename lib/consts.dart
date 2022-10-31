@@ -43,6 +43,23 @@ InputDecoration kMsgInputContainerDecoration = InputDecoration(
     ),
 );
 
+InputDecoration kSearchGroupInputDecoration = InputDecoration(
+    border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.white,width: 1.4),
+    ),
+    enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.white,width: 1.4),
+    ),
+    focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.white,width: 1.4),
+    ),
+    hintStyle:GoogleFonts.poppins(color:Colors.white),
+    hintText: "search for a group",
+);
+
 void showSnackBar(BuildContext buildContext ,String txt, int duration){
     ScaffoldMessenger.of(buildContext).showSnackBar(
         SnackBar(

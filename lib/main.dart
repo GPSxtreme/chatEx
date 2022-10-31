@@ -8,7 +8,7 @@ import 'package:chat_room/pages/registrationScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:chat_room/pages/profileCreate.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
-
+import 'package:chat_room/pages/searchGroupsScreen.dart';
 
 
 Future<void> main() async{
@@ -27,14 +27,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute:SplashScreen.id,
       routes: {
-        SplashScreen.id:(context) =>SplashScreen(),
+        SplashScreen.id:(context) =>const SplashScreen(),
         welcomeScreen.id : (context) => welcomeScreen(),
         loginScreen.id: (context) => loginScreen(),
-        regScreen.id:(context)=>regScreen(),
-        profileCreate.id:(context)=>profileCreate(),
-        MainScreen.id:(context)=>MainScreen(),
+        regScreen.id:(context)=>const regScreen(),
+        profileCreate.id:(context)=>const profileCreate(),
+        MainScreen.id:(context)=>const MainScreen(),
+        SearchGroupsScreen.id:(context)=>const SearchGroupsScreen(),
         chatScreen.id:(context)=>chatScreen(),
-        profileUserShow.id:(context)=>profileUserShow(),
+        profileUserShow.id:(context)=>const profileUserShow(),
       },
     );
   }

@@ -6,14 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import '../components/roundedBtnT1.dart';
-import 'chatScreen.dart';
 import 'package:chat_room/consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class regScreen extends StatefulWidget {
   static String id = 'reg_screen';
-  regScreen({Key? key}) : super(key: key);
+  const regScreen({Key? key}) : super(key: key);
   @override
   State<regScreen> createState() => _regScreenState();
 }

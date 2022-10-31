@@ -1,3 +1,4 @@
+import 'package:chat_room/pages/searchGroupsScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -63,9 +64,7 @@ class _MainScreenState extends State<MainScreen> {
                 reverse: false,
                 itemCount: snapshot.data['joinedGroups'].length,
                 itemBuilder: (context,index){
-                  if(index == snapshot.data['joinedGroups'].length){
-                  }
-                  return GroupTile(groupId: snapshot.data["joinedGroups"][index]);
+                    return GroupTile(groupId: snapshot.data["joinedGroups"][index]);
                 },
               );
             }
@@ -115,7 +114,9 @@ class _MainScreenState extends State<MainScreen> {
           title: Text("ChatEx",style: GoogleFonts.poppins(color: Colors.white,fontSize: 27,fontWeight: FontWeight.bold),),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: (){},
+            IconButton(onPressed: (){
+                Navigator.pushNamed(context, SearchGroupsScreen.id);
+            },
                 icon: const Icon(Icons.search,color: Colors.white,)
             )
           ],

@@ -45,7 +45,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: HexColor("#3d3d3d"),
+      backgroundColor: HexColor("#222222"),
       title: Text(
         title,
         textAlign: TextAlign.center,

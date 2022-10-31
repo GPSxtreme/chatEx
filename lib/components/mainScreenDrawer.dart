@@ -79,12 +79,6 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
             ),
             const SizedBox(height: 10,),
             ListTile(
-              onTap: (){},
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-              leading: const Icon(Icons.people,color: Colors.white,size: 30,),
-              title: Text("Groups",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
-            ),
-            ListTile(
               onTap: (){
                 popOutOfContext();
                 HelperFunctions.popUpGrpCreateDialog(context,widget.userName,widget.userUid);
@@ -93,6 +87,13 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
               leading: const Icon(Icons.person_add_alt_1,color: Colors.white,size: 30,),
               title: Text("Create group",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
             ),
+            ListTile(
+              onTap: (){},
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              leading: const Icon(Icons.settings,color: Colors.white,size: 30,),
+              title: Text("Settings",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
+            ),
+
             const Expanded(child: SizedBox()),
             const Divider(
               color: Colors.white24,
