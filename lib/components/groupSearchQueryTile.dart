@@ -1,3 +1,4 @@
+import 'package:chat_room/consts.dart';
 import 'package:chat_room/databaseService.dart';
 import 'package:chat_room/pages/chatScreen.dart';
 import 'package:flutter/material.dart';
@@ -45,10 +46,12 @@ class _GroupSearchQueryTileState extends State<GroupSearchQueryTile> {
           onTap: (){
             if(isJoined){
               Navigator.pushNamed(context, chatScreen.id,arguments: {"groupId":widget.groupId,"groupName":name,"createdBy":by});
+            }else{
+              showSnackBar(context, "Join $name to enter chat.", 1100,bgColor: Colors.indigo);
             }
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
             child: Row(
               children: [
                 grpIcon != "" ?

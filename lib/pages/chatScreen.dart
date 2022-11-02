@@ -112,9 +112,9 @@ leaveGroup()async{
                     );
                   }, child: const Icon(Ionicons.log_out_outline,color: Colors.red,size: 25,)),
                   TextButton(onPressed: (){
-                    showSnackBar(context, 'Coming soon under progress :)', 2200);
+                    showSnackBar(context, 'Coming soon under progress :)', 1500,bgColor: Colors.indigo);
                   },
-                    child: const Icon(Ionicons.information_circle_outline,color: Colors.red,size: 25,),
+                    child: const Icon(Ionicons.information_circle_outline,color: Colors.blue,size: 25,),
                   )
                 ]
             ),

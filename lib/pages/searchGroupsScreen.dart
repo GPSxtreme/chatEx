@@ -15,12 +15,34 @@ class SearchGroupsScreen extends StatefulWidget {
 
 class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
   TextEditingController searchController = TextEditingController();
-  bool isLoading = false;
   final _fireStore = FirebaseFirestore.instance;
   String query = "";
   QuerySnapshot? querySnapshot;
-  int snapshotDocsLen = 0;
   bool hasUserSearched = false;
+  bool noResults = false;
+  List<Map> allGroups = [];
+  List<GroupSearchQueryTile> showGrpTiles = [];
+  bool isLocalListLoading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAllGroups();
+  }
+
+  fetchAllGroups()async{
+    QuerySnapshot snapshot =  await _fireStore.collection("groups").get();
+    for(var doc in snapshot.docs){
+      allGroups.add({
+        "grpName": doc.get("name"),
+        "grpId": doc.get("groupId")
+      });
+    }
+    setState(() {
+      isLocalListLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,13 +60,14 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                 child: TextField(
                   keyboardType: TextInputType.name,
-                  onChanged: (val){
+                    onChanged: (val){
                     setState(() {
                       query = val;
                     });
-                  },
+                    localSearchGroup(val);
+                    },
                   onSubmitted: (val){
-                    initiateSearchGroup();
+                    localSearchGroup(val);
                   },
                   cursorColor: Colors.white,
                   controller: searchController,
@@ -52,64 +75,111 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
                   decoration: kSearchGroupInputDecoration.copyWith(
                     suffixIcon: IconButton(icon: const Icon(Icons.search,color: Colors.white,),
                       onPressed: () {
-                        initiateSearchGroup();
+                        localSearchGroup(query);
                       },
                     )
                   )
                 ),
             ),
             const SizedBox(height: 10,),
-            isLoading ? Center(child: Column(
+            isLocalListLoading ? Center(child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height*0.25,),
                 const CircularProgressIndicator(color: Colors.white,),
+                const SizedBox(height: 20,),
+                const Text("fetching groups..",style:TextStyle(color:Colors.white ))
               ],
-            ),) : groupList()
+            ),) : localListGroupTile()
           ],
         ),
       ),
     );
   }
-  initiateSearchGroup()async{
-    if(searchController.text.isNotEmpty){
+
+  localListGroupTile(){
+    if(hasUserSearched && !noResults){
+      return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: showGrpTiles.length,
+        itemBuilder: (context,index){
+          return showGrpTiles[index];
+        },
+      );
+    }
+    else if(noResults){
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height*0.25,),
+            Icon(Icons.not_interested_outlined,color: HexColor("222222"),size: 100,),
+            Text("No search results found",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),),
+          ],
+        ),
+      );
+    }
+    else if (!hasUserSearched){
+      //can be updated with new hot groups right now plan
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height*0.25,),
+            Icon(Icons.search,color: HexColor("222222"),size: 100,),
+            Text("Search for results",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),)
+          ],
+        ),
+      );
+    }
+
+  }
+  void localSearchGroup(String query){
+    if(searchController.text.isEmpty){
+      showGrpTiles = [];
       setState(() {
-        isLoading = true;
+        hasUserSearched = false;
+        noResults = false;
       });
-      await _fireStore.collection("groups").where("name",isEqualTo: query).get().then((snapshot){
+    } else{
+      setState(() {
+        hasUserSearched = true;
+        noResults = false;
+      });
+      if(query == "/*all"){
+        List<GroupSearchQueryTile> localQueryList = [];
+        for(var grp in allGroups){
+          localQueryList.add(GroupSearchQueryTile(groupId: grp["grpId"]));
+        }
         setState(() {
-          querySnapshot = snapshot;
-          snapshotDocsLen = snapshot.docs.length;
-          isLoading = false;
-          hasUserSearched = true;
+          showGrpTiles = localQueryList;
         });
-      });
+      }else{
+        final grpList = allGroups.where((grp){
+          final grpName = grp["grpName"].toString().toLowerCase();
+          final input = query.toLowerCase();
+          if(grpName[0] == input[0]){
+            return grpName.contains(input);
+          }
+          return false;
+        }
+        ).toList();
+        if(grpList.isEmpty){
+          setState(() {
+            noResults = true;
+          });
+        }
+        List<GroupSearchQueryTile> localQueryList = [];
+        for(var grp in grpList){
+          localQueryList.add(GroupSearchQueryTile(groupId: grp["grpId"]));
+        }
+        setState(() {
+          showGrpTiles = localQueryList;
+        }
+        );
+      }
     }
   }
-
-  groupList(){
-    return hasUserSearched && snapshotDocsLen > 0?
-    ListView.builder(
-        shrinkWrap: true,
-        itemCount: querySnapshot?.docs.length,
-        itemBuilder: (context,index){
-            return GroupSearchQueryTile(groupId: querySnapshot?.docs[index]["groupId"],);
-        },
-    )
-        : Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height*0.25,),
-          !hasUserSearched ?
-          Icon(Icons.search,color: HexColor("222222"),size: 100,):
-          Icon(Icons.not_interested_outlined,color: HexColor("222222"),size: 100,),
-          !hasUserSearched ?
-          Text("Search for results",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),) :
-          Text("No search results found",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),)
-        ],
-      ),
-    );
-  }
-
 }

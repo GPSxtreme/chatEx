@@ -60,7 +60,7 @@ InputDecoration kSearchGroupInputDecoration = InputDecoration(
     hintText: "search for a group",
 );
 
-void showSnackBar(BuildContext buildContext ,String txt, int duration){
+void showSnackBar(BuildContext buildContext ,String txt, int duration,{Color? bgColor}){
     ScaffoldMessenger.of(buildContext).showSnackBar(
         SnackBar(
             content: SizedBox(
@@ -73,7 +73,7 @@ void showSnackBar(BuildContext buildContext ,String txt, int duration){
                     maxLines: 2,
                 ),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: bgColor ?? Colors.red,
             shape: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
