@@ -52,7 +52,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                       Text(widget.userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
                       TextButton(
                           onPressed: (){
-                            Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid});
+                            Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid,"isMe":true});
                           },
                           child: Container(
                             decoration: BoxDecoration(

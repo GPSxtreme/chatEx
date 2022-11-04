@@ -1,10 +1,7 @@
-import 'package:chat_room/pages/chatScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 
@@ -18,15 +15,24 @@ class profileUserShow extends StatefulWidget {
 
 class _profileUserShowState extends State<profileUserShow> {
   Map data = {};
+  String userName = "";
   final _fireStore = FirebaseFirestore.instance;
-
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty? data: ModalRoute.of(context)?.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(
-        title: Text("User Profile",style: GoogleFonts.poppins(color: Colors.white),),
+        title: Text(data["isMe"] ? "My Profile": "User Profile",style: GoogleFonts.poppins(color: Colors.white),),
         backgroundColor: Colors.black12,
+        actions: [
+          if(data["isMe"]) ...[
+            IconButton(onPressed: (){
+
+            },
+                icon: const Icon(Icons.edit,color: Colors.white,)
+            )
+          ]
+        ],
       ),
       backgroundColor: Colors.black,
       body: Center(
@@ -36,11 +42,12 @@ class _profileUserShowState extends State<profileUserShow> {
               FutureBuilder<DocumentSnapshot>(
                 future: _fireStore.collection('users').doc(data['senderUid']).get(),
                   builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot){
+                    bool isMe = data["isMe"];
                     if (snapshot.hasError) {
-                      return Text("Something went wrong");
+                      return const Text("Something went wrong");
                     }
                     if (snapshot.hasData && !snapshot.data!.exists) {
-                      return Text("Document does not exist");
+                      return const Text("Document does not exist");
                     }
 
                     if (snapshot.connectionState == ConnectionState.done) {
@@ -53,112 +60,121 @@ class _profileUserShowState extends State<profileUserShow> {
                             backgroundColor: Colors.white,
                             backgroundImage: NetworkImage(data['profileImgLink'],),
                           ),
-                          SizedBox(height: 20,),
+                          if(!isMe) ...[
+                            const SizedBox(height: 20,),
+                            Text(data["userName"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 40,fontWeight: FontWeight.w600,),textAlign: TextAlign.center,),
+                          ],
+                          const SizedBox(height: 20,),
                           Divider(
-                            thickness: 2,
+                            thickness: 1.5,
                             indent: MediaQuery.of(context).size.width*0.1,
                             endIndent: MediaQuery.of(context).size.width*0.1,
-                            height: 20,
+                            height: 15,
                             color: HexColor("#999999"),
                           ),
                           const SizedBox(height: 30,),
                           Container(
                             width: MediaQuery.of(context).size.width*0.8,
                             decoration: BoxDecoration(
-                                color: Colors.white24,
+                                color: HexColor("222222"),
                               borderRadius: BorderRadius.circular(8)
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius: BorderRadius.circular(8)
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text("Name",style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10,),
-                                      Text(data["userName"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w300)),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20,),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius: BorderRadius.circular(8)
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text("Email",style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600)),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 15,),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                              onTap:()async{
-                                                final email = "mailto:${data['email']}";
-                                                try {
-                                                  await launchUrlString(email);
-                                                } catch (_e) { print(_e);}
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  Text(data["email"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 17,fontWeight: FontWeight.w500,decoration: TextDecoration.underline)),
-                                                  const SizedBox(width: 5,),
-                                                  const Icon(Icons.email,color: Colors.green,size: 30,)
-                                                ],
-                                              )
+                                  if(isMe) ...[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(width: 30,),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white24,
+                                              borderRadius: BorderRadius.circular(8)
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 2),
+                                            child: Text("Name",style:GoogleFonts.poppins(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w400)),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Text(data["userName"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600)),
+                                        const SizedBox(width: 30,),
+                                      ],
+                                    )
+                                  ],
                                   const SizedBox(height: 20,),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
+                                      const SizedBox(width: 30,),
                                       Container(
                                         decoration: BoxDecoration(
                                             color: Colors.white24,
                                             borderRadius: BorderRadius.circular(8)
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text("Ph.no",style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 2),
+                                          child: Text("Email",style:GoogleFonts.poppins(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w400)),
                                         ),
                                       ),
-                                      const SizedBox(width: 10,),
+                                      const Spacer(),
                                       GestureDetector(
-                                        onTap: () async{
-                                          final phNo = "tel:${data["phoneNumber"]}>";
-                                        try {
-                                            await launchUrlString(phNo);
-                                          } catch (_e) { print(_e);}
-                                        },
+                                          onTap:()async{
+                                            if(!isMe){
+                                              final email = "mailto:${data['email']}";
+                                              try {
+                                                await launchUrlString(email);
+                                              } catch (e) { print(e);}
+                                            }
+                                          },
                                           child: Row(
                                             children: [
-                                              Text(data["phoneNumber"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500,decoration: TextDecoration.underline)),
-                                              const SizedBox(width: 5,),
-                                              const Icon(Icons.phone,color: Colors.green,size: 30,)
+                                              Text(data["email"],style:GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w600)),
+                                              const SizedBox(width: 30,),
                                             ],
                                           )
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 20,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(width: 30,),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white24,
+                                            borderRadius: BorderRadius.circular(8)
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 2),
+                                          child: Text("Phone",style:GoogleFonts.poppins(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w400)),
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      GestureDetector(
+                                        onTap: () async{
+                                          if(!isMe){
+                                            final phNo = "tel:${data["phoneNumber"]}>";
+                                            try {
+                                              await launchUrlString(phNo);
+                                            } catch (e) { print(e);}
+                                          }
+                                        },
+                                          child: Row(
+                                            children: [
+                                              Text(data["phoneNumber"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600,)),
+                                              const SizedBox(width: 5,),
+                                              const Icon(Icons.phone,color: Colors.green,size: 30,)
+                                            ],
+                                          )
+                                      ),
+                                      const SizedBox(width: 30,),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 30,),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -168,23 +184,23 @@ class _profileUserShowState extends State<profileUserShow> {
                                             borderRadius: BorderRadius.circular(8)
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text("about",style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 2),
+                                          child: Text("About",style:GoogleFonts.poppins(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w400)),
                                         ),
                                       ),
-                                      const SizedBox(width: 10,),
-                                      Text(data["about"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w300)),
+                                      const SizedBox(height: 20,),
+                                      Text(data["about"],style:GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w400)),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                          SizedBox(height: 50,)
+                          const SizedBox(height: 50,)
                         ],
                       );
                     }
-                    return Text("loading",style: TextStyle(color: Colors.white),);
+                    return const CircularProgressIndicator(color: Colors.white,);
                   }
               ),
             ],

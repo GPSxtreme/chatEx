@@ -157,13 +157,25 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
           showGrpTiles = localQueryList;
         });
       }else{
-        final grpList = allGroups.where((grp){
+        List grpList = allGroups.where((grp){
           final grpName = grp["grpName"].toString().toLowerCase();
           final input = query.toLowerCase();
-          if(grpName[0] == input[0]){
-            return grpName.contains(input);
+          if(input[0] == grpName[0]){
+            if(query.length > 3){
+              if(input == grpName.substring(0,input.length)){
+                return grpName.contains(input);
+              }
+              else{
+                return false;
+              }
+            }
+            else{
+              return grpName.contains(input);
+            }
           }
-          return false;
+          else{
+            return false;
+          }
         }
         ).toList();
         if(grpList.isEmpty){

@@ -292,7 +292,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                             if(!widget.isMe) ...[
                               GestureDetector(
                                   onTap: (){
-                                    Navigator.pushReplacementNamed(context, profileUserShow.id,arguments: {"senderUid":widget.senderUid});
+                                    Navigator.pushReplacementNamed(context, profileUserShow.id,arguments: {"senderUid":widget.senderUid,"isMe":false});
                                   },
                                   child: Text(widget.senderUserName,style:  GoogleFonts.poppins(color: Colors.amber,fontSize: 17,decoration: TextDecoration.underline),)
                               ),
