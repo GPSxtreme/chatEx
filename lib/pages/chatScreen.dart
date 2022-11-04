@@ -285,7 +285,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                     child: Container(
                       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.75),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 9.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

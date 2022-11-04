@@ -47,4 +47,18 @@ class DatabaseService{
       "members":FieldValue.arrayUnion([userDetails["userName"]])
     });
   }
+  static Future updateUserName(String name)async{
+    final _fireStore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    await _fireStore.collection("users").doc(_auth.currentUser?.uid).update({
+      "userName":name
+    });
+  }
+  static Future updateUserAbout(String about)async{
+    final _fireStore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    await _fireStore.collection("users").doc(_auth.currentUser?.uid).update({
+      "about":about
+    });
+  }
 }
