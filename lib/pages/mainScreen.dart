@@ -12,9 +12,7 @@ import 'package:chat_room/components/mainScreenDrawer.dart';
 dynamic loggedUser;
 class MainScreen extends StatefulWidget {
   static String id = "main_screen";
-  static dynamic image;
   const MainScreen({Key? key}) : super(key: key);
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }

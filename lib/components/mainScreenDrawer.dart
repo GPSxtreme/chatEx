@@ -1,5 +1,6 @@
 import 'package:chat_room/pages/profileUserShow.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,12 +19,34 @@ class MainScreenDrawer extends StatefulWidget {
 
 class _MainScreenDrawerState extends State<MainScreenDrawer> {
   final _auth = FirebaseAuth.instance;
+  final _fireStore = FirebaseFirestore.instance;
+  String updatedUserName = "";
+  String updatedImageUrl = "";
   popOutOfContext(){
     Navigator.of(context).pop();
   }
   userLogOut(){
     _auth.signOut();
     Navigator.popAndPushNamed(context, welcomeScreen.id);
+  }
+  checkIfUserDetailsChanged()async{
+    final userDetails = await  _fireStore.collection("users").doc(widget.userUid).get();
+    if(userDetails["userName"] != widget.userName){
+      setState(() {
+        updatedUserName = userDetails["userName"];
+      });
+    }
+    if(userDetails["profileImgLink"] != widget.imageUrl){
+      setState(() {
+        updatedImageUrl = userDetails["profileImgLink"];
+      });
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkIfUserDetailsChanged();
   }
   @override
   Widget build(BuildContext context) {
@@ -42,14 +65,14 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                   CircleAvatar(
                     radius: 35,
                     backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(widget.imageUrl,scale: 1),
+                    backgroundImage: NetworkImage(updatedImageUrl != "" ?  updatedImageUrl:widget.imageUrl),
                   ),
                   const SizedBox(width: 15,),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 10,),
-                      Text(widget.userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
+                      Text(updatedUserName != "" ? updatedUserName:widget.userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
                       TextButton(
                           onPressed: (){
                             Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid,"isMe":true});
@@ -122,69 +145,3 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
     );
   }
 }
-/*
-ListView(
-        padding: const EdgeInsets.only(top: 50),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(widget.imageUrl,scale: 1),
-                ),
-                const SizedBox(width: 15,),
-                Text(widget.userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10,),
-          ListTile(
-            onTap: (){
-              Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid});
-            },
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-            leading: const Icon(Icons.person,color: Colors.white,size: 30,),
-            title: Text("My profile",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
-          ),
-          ListTile(
-            onTap: (){},
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-            leading: const Icon(Icons.people,color: Colors.white,size: 30,),
-            title: Text("Groups",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
-          ),
-          ListTile(
-            onTap: (){
-              popOutOfContext();
-              HelperFunctions.popUpGrpCreateDialog(context,widget.userName,widget.userUid);
-            },
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-            leading: const Icon(Icons.person_add_alt_1,color: Colors.white,size: 30,),
-            title: Text("Create group",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w400),),
-          ),
-          const Divider(
-            color: Colors.white24,
-            indent: 20,
-            endIndent: 20,
-            height: 2,
-          ),
-          ListTile(
-            onTap: (){
-              showDialogBox(
-                  context,
-                  'Log Out?',
-                  "You can login again by entering your credentials.",
-                  Colors.red,
-                  userLogOut,
-                  popOutOfContext
-              );
-            },
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-            leading: const Icon(Icons.logout,color: Colors.red,size: 30,),
-            title: Text("Logout",style: GoogleFonts.poppins(fontSize: 20,color: Colors.red,fontWeight: FontWeight.w400),),
-          ),
-        ],
-      ),
- */

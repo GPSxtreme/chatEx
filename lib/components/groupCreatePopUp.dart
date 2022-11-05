@@ -15,6 +15,7 @@ class GroupCreatePopUp extends StatefulWidget {
   const GroupCreatePopUp({Key? key, required this.userName, required this.userUid}) : super(key: key);
   final String userName;
   final String userUid;
+  static dynamic image;
   @override
   State<GroupCreatePopUp> createState() => _GroupCreatePopUpState();
 }
@@ -31,12 +32,12 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
       title = "Creating...";
     });
     String url = "";
-    url = await CloudStorageService.addGrpImageGetLink("groupProfilePictures/${widget.userUid}_$groupName.jpg",MainScreen.image!.path);
+    url = await CloudStorageService.addGrpImageGetLink("groupProfilePictures/${widget.userUid}_$groupName.jpg",GroupCreatePopUp.image!.path);
     await DatabaseService.addNewGroup(groupName,widget.userName,widget.userUid,url);
     setState(() {
       isGrpCreateLoading = false;
       title = "Create a group";
-      MainScreen.image = null;
+      GroupCreatePopUp.image = null;
       groupName = "";
     });
     Navigator.of(context).pop();
@@ -104,7 +105,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
                 if(!isGrpCreateLoading){
                   groupNameTextController.clear();
                   setState(() {
-                    MainScreen.image = null;
+                    GroupCreatePopUp.image = null;
                     groupName = "";
                   });
                   Navigator.of(context).pop();
@@ -120,7 +121,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
             ),
             const SizedBox(width: 20,),
             ElevatedButton(onPressed: ()async{
-              if(groupName.isNotEmpty && MainScreen.image != null){
+              if(groupName.isNotEmpty && GroupCreatePopUp.image != null){
                 if(isGrpCreateLoading){
                   showSnackBar(context, "Group creation under progress!", 1300);
                 }
@@ -158,14 +159,14 @@ class _PickDpCircularAvatarState extends State<PickDpCircularAvatar> {
         imageQuality: 50
     );
     setState(() {
-      MainScreen.image = imgPath;
+      GroupCreatePopUp.image = imgPath;
     });
   }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: pickUploadImage,
-        child: MainScreen.image == null ? CircleAvatar(
+        child: GroupCreatePopUp.image == null ? CircleAvatar(
           radius: 50,
           backgroundColor: Colors.white,
           child:  Column(
@@ -178,7 +179,7 @@ class _PickDpCircularAvatarState extends State<PickDpCircularAvatar> {
         ) : CircleAvatar(
           radius: 50,
           backgroundColor: Colors.white,
-          backgroundImage: FileImage(File(MainScreen.image.path)),
+          backgroundImage: FileImage(File(GroupCreatePopUp.image.path)),
         )
     );
   }
