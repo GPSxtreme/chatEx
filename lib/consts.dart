@@ -118,7 +118,4 @@ class HelperFunctions{
             }
         );
     }
-    // static restartApp() async {
-    //     FlutterRestart.restartApp();
-    // }
 }

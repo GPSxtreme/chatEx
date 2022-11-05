@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:chat_room/components/imagePickerCircleAvatar.dart';
 import '../consts.dart';
 import 'dart:io';
-import 'package:restart_app/restart_app.dart';
 
 class profileUserShow extends StatefulWidget {
   static String id = 'profileUser_screen';
@@ -42,9 +41,8 @@ class _profileUserShowState extends State<profileUserShow> {
           title: Text(dataPassed["isMe"] ? "My Profile": "User Profile",style: GoogleFonts.poppins(color: Colors.white),),
           backgroundColor: Colors.black12,
           actions: [
-            IconButton(onPressed: (){
-              Restart.restartApp();
-            }, icon: const Icon(Icons.refresh,color: Colors.white,)),
+            IconButton(onPressed: (){}
+                , icon: const Icon(Icons.refresh,color: Colors.white,)),
             if(dataPassed["isMe"]) ...[
               IconButton(onPressed: (){
                 setState(() {
