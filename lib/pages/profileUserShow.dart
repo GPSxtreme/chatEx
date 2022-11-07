@@ -1,5 +1,5 @@
-import 'package:chat_room/cloudStorageService.dart';
-import 'package:chat_room/databaseService.dart';
+import 'package:chat_room/services/cloudStorageService.dart';
+import 'package:chat_room/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +8,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:chat_room/components/imagePickerCircleAvatar.dart';
 import '../consts.dart';
-import 'dart:io';
+import 'package:chat_room/services/localDataService.dart';
 
 class profileUserShow extends StatefulWidget {
   static String id = 'profileUser_screen';
@@ -26,11 +26,20 @@ class _profileUserShowState extends State<profileUserShow> {
   String updatedName = "";
   String updatedAbout = "";
   bool isLoading = false;
-  dynamic newDpPath;
-  bool isDpChanged = false;
-  String newDpUrl = "";
+  String userDpUrl = "";
   //class methods
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchUserDetails();
+  }
+  void fetchUserDetails()async{
+   String localUserDpUrl = await LocalDataService.getUserDpUrl() ?? "NA";
+   setState(() {
+     userDpUrl = localUserDpUrl;
+   });
+  }
   @override
   Widget build(BuildContext context) {
     dataPassed = dataPassed.isNotEmpty? dataPassed: ModalRoute.of(context)?.settings.arguments as Map;
@@ -41,8 +50,6 @@ class _profileUserShowState extends State<profileUserShow> {
           title: Text(dataPassed["isMe"] ? "My Profile": "User Profile",style: GoogleFonts.poppins(color: Colors.white),),
           backgroundColor: Colors.black12,
           actions: [
-            IconButton(onPressed: (){}
-                , icon: const Icon(Icons.refresh,color: Colors.white,)),
             if(dataPassed["isMe"]) ...[
               IconButton(onPressed: (){
                 setState(() {
@@ -70,6 +77,7 @@ class _profileUserShowState extends State<profileUserShow> {
                     }
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> dataFetched = snapshot.data!.data() as Map<String, dynamic>;
+                      LocalDataService.setUserDpUrl(dataFetched["profileImgLink"]);
                       void openCaller()async{
                         final phNo = "tel:${dataFetched["phoneNumber"]}";
                         try {
@@ -86,17 +94,16 @@ class _profileUserShowState extends State<profileUserShow> {
                         children: [
                           const SizedBox(height: 30,),
                           if(!inEditMode) ...[
-                            !isDpChanged ?
-                              CircleAvatar(
-                                radius: 90,
-                                backgroundColor: Colors.white,
-                                backgroundImage:NetworkImage(dataFetched['profileImgLink'],),
-                              ):
+                            userDpUrl != "" ?
                             CircleAvatar(
                               radius: 90,
                               backgroundColor: Colors.white,
-                              backgroundImage: newDpUrl != "" ? NetworkImage(newDpUrl) : FileImage(File(newDpPath.path)) as ImageProvider,
-                            )
+                              backgroundImage: NetworkImage(userDpUrl),
+                            ):const CircleAvatar(
+                                radius: 90,
+                                backgroundColor: Colors.white,
+                                child: CircularProgressIndicator(color: Colors.blue,strokeWidth: 10,),
+                            ),
                           ],
                           if(inEditMode) ...[
                             ImagePickerCircleAvatar(imageUrl: dataFetched['profileImgLink'])
@@ -242,12 +249,10 @@ class _profileUserShowState extends State<profileUserShow> {
                                     });
                                   }
                                   if(ImagePickerCircleAvatar.image != null){
-                                    print('start');
                                     String url = await CloudStorageService.updateUserProfilePic(ImagePickerCircleAvatar.image.path);
+                                    LocalDataService.setUserDpUrl(url);
                                     setState(() {
-                                      newDpPath = ImagePickerCircleAvatar.image;
-                                      newDpUrl = url;
-                                      isDpChanged = true;
+                                      userDpUrl = url;
                                     });
                                   }
                                   setState(() {

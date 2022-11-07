@@ -1,9 +1,9 @@
-import 'package:chat_room/databaseService.dart';
+import 'package:chat_room/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import  'package:chat_room/consts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:chat_room/cloudStorageService.dart';
+import 'package:chat_room/services/cloudStorageService.dart';
 import 'package:chat_room/pages/mainScreen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';

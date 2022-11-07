@@ -1,5 +1,5 @@
 import 'package:chat_room/consts.dart';
-import 'package:chat_room/databaseService.dart';
+import 'package:chat_room/services/databaseService.dart';
 import 'package:chat_room/pages/chatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

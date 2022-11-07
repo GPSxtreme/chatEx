@@ -1,4 +1,4 @@
-import 'package:chat_room/authService.dart';
+import 'package:chat_room/services/authService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

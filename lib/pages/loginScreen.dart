@@ -1,5 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:chat_room/authService.dart';
+import 'package:chat_room/services/authService.dart';
 import 'package:chat_room/pages/chatScreen.dart';
 import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileCreate.dart';

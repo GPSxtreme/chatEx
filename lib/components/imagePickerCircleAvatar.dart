@@ -31,18 +31,12 @@ class  _ImagePickerCircleAvatar extends State<ImagePickerCircleAvatar> {
   }
   @override
   Widget build(BuildContext context) {
-    ImageProvider img ;
-    if(ImagePickerCircleAvatar.image == null){
-      img = NetworkImage(widget.imageUrl);
-    }else{
-      img = FileImage(File(ImagePickerCircleAvatar.image.path));
-    }
     return GestureDetector(
         onTap: pickUploadImage,
         child:CircleAvatar(
           radius: 90,
           backgroundColor: Colors.white,
-          backgroundImage: img,
+          backgroundImage: ImagePickerCircleAvatar.image == null ? NetworkImage(widget.imageUrl) : FileImage(File(ImagePickerCircleAvatar.image.path)) as ImageProvider,
           child:  Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(90),

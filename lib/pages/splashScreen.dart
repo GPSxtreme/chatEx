@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:chat_room/authService.dart';
+import 'package:chat_room/services/authService.dart';
 
 class SplashScreen extends StatefulWidget {
   static String id = "splash_screen";
