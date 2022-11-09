@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../consts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class MainScreenDrawer extends StatefulWidget {
   const MainScreenDrawer({Key? key, required this.imageUrl, required this.userName, required this.userUid}) : super(key: key);
@@ -20,33 +22,12 @@ class MainScreenDrawer extends StatefulWidget {
 class _MainScreenDrawerState extends State<MainScreenDrawer> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
-  String updatedUserName = "";
-  String updatedImageUrl = "";
   popOutOfContext(){
     Navigator.of(context).pop();
   }
   userLogOut(){
     _auth.signOut();
     Navigator.popAndPushNamed(context, welcomeScreen.id);
-  }
-  checkIfUserDetailsChanged()async{
-    final userDetails = await  _fireStore.collection("users").doc(widget.userUid).get();
-    if(userDetails["userName"] != widget.userName){
-      setState(() {
-        updatedUserName = userDetails["userName"];
-      });
-    }
-    if(userDetails["profileImgLink"] != widget.imageUrl){
-      setState(() {
-        updatedImageUrl = userDetails["profileImgLink"];
-      });
-    }
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    checkIfUserDetailsChanged();
   }
   @override
   Widget build(BuildContext context) {
@@ -58,47 +39,60 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
         padding: const EdgeInsets.only(top:50.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 35,
-                    backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(updatedImageUrl != "" ?  updatedImageUrl:widget.imageUrl),
-                  ),
-                  const SizedBox(width: 15,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10,),
-                      Text(updatedUserName != "" ? updatedUserName:widget.userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
-                      TextButton(
-                          onPressed: (){
-                            Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid,"isMe":true});
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text("View profile ",style: GoogleFonts.poppins(color: Colors.white),),
-                                  const Icon(Ionicons.eye_outline,color: Colors.white,)
-                                ],
-                              ),
-                            ),
-                          )
-                      )
-                    ],
-                  ),
-                ],
-              ),
+            StreamBuilder(
+              stream:  _fireStore.collection("users").doc(widget.userUid).snapshots(),
+              builder: (context,AsyncSnapshot snapshot){
+                if(snapshot.hasData){
+                  String userName = snapshot.data["userName"];
+                  String userDpUrl = snapshot.data["profileImgLink"];
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 35,
+                            backgroundColor: Colors.white,
+                            backgroundImage: CachedNetworkImageProvider(userDpUrl),
+                          ),
+                          const SizedBox(width: 15,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10,),
+                              Text(userName,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 20),),
+                              TextButton(
+                                  onPressed: (){
+                                    Navigator.pushNamed(context, profileUserShow.id,arguments:{"senderUid":widget.userUid,"isMe":true});
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text("View profile ",style: GoogleFonts.poppins(color: Colors.white),),
+                                          const Icon(Ionicons.eye_outline,color: Colors.white,)
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }else{
+                  return const Center(child: CircularProgressIndicator(color: Colors.white,));
+                }
+              },
             ),
             const SizedBox(height: 10,),
             ListTile(

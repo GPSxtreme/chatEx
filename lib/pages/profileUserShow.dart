@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:chat_room/components/imagePickerCircleAvatar.dart';
 import '../consts.dart';
 import 'package:chat_room/services/localDataService.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class profileUserShow extends StatefulWidget {
   static String id = 'profileUser_screen';
@@ -27,6 +28,7 @@ class _profileUserShowState extends State<profileUserShow> {
   String updatedAbout = "";
   bool isLoading = false;
   String userDpUrl = "";
+  CachedNetworkImageProvider? networkImg;
   //class methods
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _profileUserShowState extends State<profileUserShow> {
    String localUserDpUrl = await LocalDataService.getUserDpUrl() ?? "NA";
    setState(() {
      userDpUrl = localUserDpUrl;
+     networkImg = CachedNetworkImageProvider(localUserDpUrl);
    });
   }
   @override
@@ -94,11 +97,11 @@ class _profileUserShowState extends State<profileUserShow> {
                         children: [
                           const SizedBox(height: 30,),
                           if(!inEditMode) ...[
-                            userDpUrl != "" ?
+                            networkImg != null ?
                             CircleAvatar(
                               radius: 90,
                               backgroundColor: Colors.white,
-                              backgroundImage: NetworkImage(userDpUrl),
+                              backgroundImage: networkImg,
                             ):const CircleAvatar(
                                 radius: 90,
                                 backgroundColor: Colors.white,
@@ -106,7 +109,7 @@ class _profileUserShowState extends State<profileUserShow> {
                             ),
                           ],
                           if(inEditMode) ...[
-                            ImagePickerCircleAvatar(imageUrl: dataFetched['profileImgLink'])
+                            ImagePickerCircleAvatar(imageUrl:userDpUrl)
                           ],
                           if(!isMe) ...[
                             const SizedBox(height: 15,),
@@ -253,6 +256,7 @@ class _profileUserShowState extends State<profileUserShow> {
                                     LocalDataService.setUserDpUrl(url);
                                     setState(() {
                                       userDpUrl = url;
+                                      networkImg = CachedNetworkImageProvider(url);
                                     });
                                   }
                                   setState(() {
