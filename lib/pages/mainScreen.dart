@@ -2,97 +2,117 @@ import 'package:chat_room/pages/searchGroupsScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import  'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import  'package:chat_room/consts.dart';
+import 'package:chat_room/consts.dart';
 import 'package:chat_room/components/groupTile.dart';
 import 'package:chat_room/components/mainScreenDrawer.dart';
 
 //global variables
 dynamic loggedUser;
+
 class MainScreen extends StatefulWidget {
-  static String id = "main_screen";
   const MainScreen({Key? key}) : super(key: key);
+
+  static String id = "main_screen";
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   Map data = {};
-  final _fireStore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-  late final userDetails;
-  late final userChats;
   Stream? groups;
+  late final userChats;
+  late final userDetails;
+
+  final _auth = FirebaseAuth.instance;
+  final _fireStore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     getCurrentUser();
   }
+
   //class functions
-  void getCurrentUser ()async {
-    try{
-      final user =  _auth.currentUser;
-      if(user!=null){
+  void getCurrentUser() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
         loggedUser = user;
       }
-      userDetails = await _fireStore.collection('users').doc(loggedUser.uid).get();
-      userChats = await _fireStore.collection('users').doc(loggedUser.uid).collection("chats").get();
-    }
-    catch(e){
+      userDetails =
+          await _fireStore.collection('users').doc(loggedUser.uid).get();
+      userChats = await _fireStore
+          .collection('users')
+          .doc(loggedUser.uid)
+          .collection("chats")
+          .get();
+    } catch (e) {
       print(e);
     }
   }
-  popOutOfContext(){
+
+  popOutOfContext() {
     Navigator.of(context).pop();
   }
-  userLogOut(){
+
+  userLogOut() {
     _auth.signOut();
     Navigator.popAndPushNamed(context, welcomeScreen.id);
   }
-  groupList(){
+
+  groupList() {
     return StreamBuilder(
-        stream:  _fireStore.collection("users").doc(loggedUser.uid).snapshots(),
-        builder:(context,AsyncSnapshot snapshot){
+        stream: _fireStore.collection("users").doc(loggedUser.uid).snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            if(snapshot.data['joinedGroups'] != null && snapshot.data['joinedGroups'].length != 0){
+            if (snapshot.data['joinedGroups'] != null &&
+                snapshot.data['joinedGroups'].length != 0) {
               return ListView.builder(
                 reverse: false,
                 itemCount: snapshot.data['joinedGroups'].length,
-                itemBuilder: (context,index){
-                    return GroupTile(groupId: snapshot.data["joinedGroups"][index]);
+                itemBuilder: (context, index) {
+                  return GroupTile(
+                      groupId: snapshot.data["joinedGroups"][index]);
                 },
               );
-            }
-            else{
+            } else {
               return noGroupWidget();
             }
-          }
-          else {
+          } else {
             return const Center(
               child: CircularProgressIndicator(
                 color: Colors.white,
               ),
             );
           }
-        }
-    );
+        });
   }
-  noGroupWidget(){
+
+  noGroupWidget() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: GestureDetector(
-        onTap: (){
-          HelperFunctions.popUpGrpCreateDialog(context, data["name"],loggedUser.uid);
+        onTap: () {
+          HelperFunctions.popUpGrpCreateDialog(
+              context, data["name"], loggedUser.uid);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.add_circle,color: Colors.white24,size: 75,),
-            Text("You have not joined any groups.Create a group by tapping here or in the options drawer or search for already existing group using the search button.",style:GoogleFonts.poppins(color: Colors.white24),textAlign: TextAlign.center,)
+            const Icon(
+              Icons.add_circle,
+              color: Colors.white24,
+              size: 75,
+            ),
+            Text(
+              "You have not joined any groups.Create a group by tapping here or in the options drawer or search for already existing group using the search button.",
+              style: GoogleFonts.poppins(color: Colors.white24),
+              textAlign: TextAlign.center,
+            )
           ],
         ),
       ),
@@ -101,28 +121,39 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty? data: ModalRoute.of(context)?.settings.arguments as Map;
+    data = data.isNotEmpty
+        ? data
+        : ModalRoute.of(context)?.settings.arguments as Map;
     return WillPopScope(
-      onWillPop: ()async => false,
+      onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black12,
           elevation: 0,
-          title: Text("ChatEx",style: GoogleFonts.poppins(color: Colors.white,fontSize: 27,fontWeight: FontWeight.bold),),
+          title: Text(
+            "ChatEx",
+            style: GoogleFonts.poppins(
+                color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: (){
-                Navigator.pushNamed(context, SearchGroupsScreen.id);
-            },
-                icon: const Icon(Icons.search,color: Colors.white,)
-            )
+            IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SearchGroupsScreen.id);
+                },
+                icon: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ))
           ],
         ),
-        drawer: MainScreenDrawer(imageUrl: data["img"],userName: data["name"],userUid: loggedUser.uid),
-        body : groupList(),
+        drawer: MainScreenDrawer(
+            imageUrl: data["img"],
+            userName: data["name"],
+            userUid: loggedUser.uid),
+        body: groupList(),
       ),
     );
   }
-
 }
