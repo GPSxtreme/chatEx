@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:chat_room/pages/searchGroupsScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,6 @@ dynamic loggedUser;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
-
   static String id = "main_screen";
 
   @override

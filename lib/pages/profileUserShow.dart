@@ -203,7 +203,8 @@ class _profileUserShowState extends State<profileUserShow> {
                             width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
                                 color: HexColor("222222"),
-                                borderRadius: BorderRadius.circular(8)),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8))),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: Column(
@@ -277,61 +278,52 @@ class _profileUserShowState extends State<profileUserShow> {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2),
-                                          child: Text("About",
-                                              style: GoogleFonts.poppins(
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400)),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      inEditMode
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: TextFormField(
-                                                initialValue:
-                                                    dataFetched["about"],
-                                                maxLines: 3,
-                                                style: GoogleFonts.poppins(
-                                                  color: Colors.white,
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                keyboardType:
-                                                    TextInputType.name,
-                                                onChanged: (value) {
-                                                  updatedAbout = value;
-                                                },
-                                                decoration:
-                                                    kTextFieldInputDecoration
-                                                        .copyWith(
-                                                  labelText: "About",
-                                                ),
-                                              ),
-                                            )
-                                          : Text('" ${dataFetched["about"]} "',
-                                              style: GoogleFonts.poppins(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w400)),
-                                    ],
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white24,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
+                                      child: Text("About",
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400)),
+                                    ),
                                   ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  inEditMode
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: TextFormField(
+                                            initialValue: dataFetched["about"],
+                                            maxLines: 3,
+                                            style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.name,
+                                            onChanged: (value) {
+                                              updatedAbout = value;
+                                            },
+                                            decoration:
+                                                kTextFieldInputDecoration
+                                                    .copyWith(
+                                              labelText: "About",
+                                            ),
+                                          ),
+                                        )
+                                      : Text('" ${dataFetched["about"]} "',
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w400)),
                                 ],
                               ),
                             ),
