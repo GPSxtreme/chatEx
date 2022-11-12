@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chat_room/pages/profileCreate.dart';
+import 'package:chat_room/services/authService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -19,11 +20,10 @@ class regScreen extends StatefulWidget {
 
 class _regScreenState extends State<regScreen> {
   String password = '';
-  String rePassword= '';
+  String rePassword = '';
   String email = '';
   final _auth = FirebaseAuth.instance;
   bool showLoader = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -34,125 +34,186 @@ class _regScreenState extends State<regScreen> {
         opacity: 0.18,
         inAsyncCall: showLoader,
         child: Center(
-            child:SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      SizedBox(width: size.width*0.09,),
-                      const Icon(
-                        Ionicons.chatbubble_ellipses_outline,
-                        color: Colors.white,
-                        size: 60,
-                      ),
-                      SizedBox(width: size.width*0.03,),
-                      SizedBox(
-                        width: size.width*0.70,
-                        child: AnimatedTextKit(
-                          animatedTexts: [
-                            TypewriterAnimatedText(
-                              'ChatEx',
-                              textStyle: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 50,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              speed: const Duration(milliseconds: 300),
-                            ),
-                          ],
-                          pause: const Duration(milliseconds: 4000),
-                          repeatForever: true,
-                        ),
-                      )
-                    ],
+            child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                children: [
+                  SizedBox(
+                    width: size.width * 0.09,
                   ),
-                  Container(
-                    margin: EdgeInsets.all(30),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 40,
-                        ),
-                        TextField(
-                          style: GoogleFonts.poppins(
+                  const Icon(
+                    Ionicons.chatbubble_ellipses_outline,
+                    color: Colors.white,
+                    size: 60,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.03,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.70,
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          'ChatEx',
+                          textStyle: GoogleFonts.poppins(
                             color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value){email = value;},
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your email",labelText: "Email",prefixIcon: const Icon(Icons.email,color: Colors.white,)),
+                          speed: const Duration(milliseconds: 300),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          obscureText: true,
-                          style: GoogleFonts.poppins(
+                      ],
+                      pause: const Duration(milliseconds: 4000),
+                      repeatForever: true,
+                    ),
+                  )
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.all(30),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    TextField(
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) {
+                        email = value;
+                      },
+                      decoration: kTextFieldInputDecoration.copyWith(
+                          hintText: "Enter your email",
+                          labelText: "Email",
+                          prefixIcon: const Icon(
+                            Icons.email,
                             color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
-                          onChanged: (value){ password = value; },
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Enter your password",labelText: "Password",prefixIcon: const Icon(Icons.lock,color: Colors.white,)),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          obscureText: true,
-                          style: GoogleFonts.poppins(
+                          )),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      obscureText: true,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      decoration: kTextFieldInputDecoration.copyWith(
+                          hintText: "Enter your password",
+                          labelText: "Password",
+                          prefixIcon: const Icon(
+                            Icons.lock,
                             color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
-                          onChanged: (value){rePassword = value;},
-                          decoration: kTextFieldInputDecoration.copyWith(hintText: "Re-enter your password",labelText: "Re-enter password",labelStyle: const TextStyle(fontSize: 15,color: Colors.white),hintStyle: const TextStyle(fontSize: 15,color: Colors.white)),
-                        ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        roundedBtn(title: 'Login', onPressed: () async {
-                          if(password.isNotEmpty && rePassword.isNotEmpty && email.isNotEmpty){
-                            if(password == rePassword && (password.length >= 6)){
+                          )),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      obscureText: true,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
+                      onChanged: (value) {
+                        rePassword = value;
+                      },
+                      decoration: kTextFieldInputDecoration.copyWith(
+                          hintText: "Re-enter your password",
+                          labelText: "Re-enter password",
+                          labelStyle: const TextStyle(
+                              fontSize: 15, color: Colors.white),
+                          hintStyle: const TextStyle(
+                              fontSize: 15, color: Colors.white)),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    roundedBtn(
+                      title: 'Login',
+                      onPressed: () async {
+                        if (_auth.currentUser != null) {
+                          setState(() {
+                            showLoader = true;
+                          });
+                          await _auth.currentUser!.reload();
+                          final user = _auth.currentUser;
+                          if (user != null) {
+                            bool isVerified = user.emailVerified;
+                            if (isVerified) {
                               setState(() {
-                                showLoader = true;
+                                showLoader = false;
                               });
-                              try{
-                                final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-                                if(newUser != null){
-                                  setState(() {
-                                    showLoader = false;
-                                  });
-                                  Navigator.pushNamed(context, profileCreate.id);
-                                }
-                              } on FirebaseAuthException catch  (e) {
+                              Navigator.pushNamed(context, profileCreate.id);
+                            } else if (!isVerified) {
+                              setState(() {
+                                showLoader = false;
+                              });
+                              showSnackBar(
+                                  context, "Please verify your email!", 1800);
+                            }
+                          }
+                        } else if (password.isNotEmpty &&
+                            rePassword.isNotEmpty &&
+                            email.isNotEmpty) {
+                          if (password == rePassword &&
+                              (password.length >= 6)) {
+                            setState(() {
+                              showLoader = true;
+                            });
+                            try {
+                              await _auth.createUserWithEmailAndPassword(
+                                  email: email, password: password);
+                              final newUser = _auth.currentUser;
+                              newUser!.sendEmailVerification().then((value) {
                                 setState(() {
                                   showLoader = false;
                                 });
-                                showSnackBar(context,e.message.toString(),2000);
-                              }
+                              });
+                              showSnackBar(
+                                  context,
+                                  "Please verify your account through the verification email sent.If not recieved please check spam folder of your email.",
+                                  3800,
+                                  bgColor: Colors.indigo);
+                            } on FirebaseAuthException catch (e) {
+                              setState(() {
+                                showLoader = false;
+                              });
+                              showSnackBar(context, e.message.toString(), 2000);
                             }
-                            else{
-                              showSnackBar(context,'Password should be longer than 6 characters',2000);
-                            }
+                          } else {
+                            showSnackBar(
+                                context,
+                                'Password should be longer than 6 characters',
+                                2000);
                           }
-                          else{
-                            showSnackBar(context,'Please fill in all fields!!',2000);
-                          }
-                        },),
-                      ],
+                        } else {
+                          showSnackBar(
+                              context, 'Please fill in all fields!!', 2000);
+                        }
+                      },
                     ),
-                  ),
-
-                ],
+                  ],
+                ),
               ),
-            )
-        ),
+            ],
+          ),
+        )),
       ),
     );
   }
