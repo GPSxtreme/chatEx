@@ -2,7 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'components/groupCreatePopUp.dart';
+import 'package:external_app_launcher/external_app_launcher.dart';
 
 const kTextFieldInputDecoration = InputDecoration(
   hintText: '',
@@ -134,5 +136,14 @@ class HelperFunctions {
         builder: (context) {
           return GroupCreatePopUp(userName: userName, userUid: userUid);
         });
+  }
+
+  static Future openGmail(BuildContext context) async {
+    try {
+      await LaunchApp.openApp(
+          androidPackageName: 'com.google.android.gm', openStore: true);
+    } catch (e) {
+      showSnackBar(context, "$e", 2000);
+    }
   }
 }

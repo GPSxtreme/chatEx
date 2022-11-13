@@ -211,6 +211,7 @@ class _profileUserShowState extends State<profileUserShow> {
                                 children: [
                                   if (isMe & !inEditMode) ...[
                                     Text(dataFetched["userName"],
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
                                             color: Colors.white,
                                             fontSize: 30,

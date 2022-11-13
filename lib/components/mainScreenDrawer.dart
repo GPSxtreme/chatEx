@@ -65,7 +65,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                               backgroundImage: NetworkImage(userDpUrl),
                             ),
                             const SizedBox(
-                              width: 15,
+                              width: 10,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,13 +73,26 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                Text(
-                                  userName,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      fontSize: 20),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      child: Text(
+                                        userName,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 TextButton(
                                     onPressed: () {

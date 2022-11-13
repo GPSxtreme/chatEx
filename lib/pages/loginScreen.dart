@@ -31,6 +31,8 @@ class _loginScreenState extends State<loginScreen> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
   bool isVerifyEmailSent = false;
+  bool showResendEmail = false;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -102,7 +104,7 @@ class _loginScreenState extends State<loginScreen> {
                             color: Colors.white,
                           )),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     TextField(
@@ -124,12 +126,36 @@ class _loginScreenState extends State<loginScreen> {
                             color: Colors.white,
                           )),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
-                    SizedBox(
-                      height: 40,
-                    ),
+                    if (isVerifyEmailSent || showResendEmail) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Did not receive verification email? ",
+                              style: TextStyle(color: Colors.white)),
+                          TextButton(
+                              onPressed: () {
+                                AuthService.sendUserVerificationEmail();
+                                showSnackBar(
+                                    context,
+                                    "Verification email sent(check spam folder if not in inbox)",
+                                    3800,
+                                    bgColor: Colors.indigo);
+                              },
+                              child: const Text(
+                                "Click here",
+                                style: TextStyle(color: Colors.blue),
+                              )),
+                        ],
+                      ),
+                      roundedBtn(
+                          title: "Open mail 📧",
+                          onPressed: () {
+                            HelperFunctions.openGmail(context);
+                          }),
+                    ],
                     roundedBtn(
                       title: 'Login',
                       onPressed: () async {
@@ -152,11 +178,12 @@ class _loginScreenState extends State<loginScreen> {
                               } else if (!isVerified) {
                                 setState(() {
                                   showLoader = false;
+                                  showResendEmail = true;
                                 });
                                 showSnackBar(
                                     context,
                                     "Please verify your email.If not recieved please check spam folder of your email.",
-                                    1800);
+                                    2800);
                               } else {
                                 setState(() {
                                   showLoader = false;
@@ -185,8 +212,10 @@ class _loginScreenState extends State<loginScreen> {
                                   showLoader = false;
                                 });
                               } else if (!isVerified && !isVerifyEmailSent) {
-                                AuthService.sendUserVerificationEmail();
-                                isVerifyEmailSent = true;
+                                await AuthService.sendUserVerificationEmail();
+                                setState(() {
+                                  isVerifyEmailSent = true;
+                                });
                                 showSnackBar(
                                     context,
                                     "Please verify your account through the verification email sent.If not recieved please check spam folder of your email.",

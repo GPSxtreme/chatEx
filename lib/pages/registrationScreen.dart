@@ -24,6 +24,7 @@ class _regScreenState extends State<regScreen> {
   String email = '';
   final _auth = FirebaseAuth.instance;
   bool showLoader = false;
+  bool isVerifyEmailSent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -142,8 +143,35 @@ class _regScreenState extends State<regScreen> {
                               fontSize: 15, color: Colors.white)),
                     ),
                     const SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
+                    if (isVerifyEmailSent) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Did not receive verification email? ",
+                              style: TextStyle(color: Colors.white)),
+                          TextButton(
+                              onPressed: () {
+                                AuthService.sendUserVerificationEmail();
+                                showSnackBar(
+                                    context,
+                                    "Verification email sent(check spam folder if not in inbox)",
+                                    3800,
+                                    bgColor: Colors.indigo);
+                              },
+                              child: const Text(
+                                "Click here",
+                                style: TextStyle(color: Colors.blue),
+                              )),
+                        ],
+                      ),
+                      roundedBtn(
+                          title: "Open mail 📧",
+                          onPressed: () {
+                            HelperFunctions.openGmail(context);
+                          }),
+                    ],
                     roundedBtn(
                       title: 'Login',
                       onPressed: () async {
@@ -183,6 +211,7 @@ class _regScreenState extends State<regScreen> {
                               newUser!.sendEmailVerification().then((value) {
                                 setState(() {
                                   showLoader = false;
+                                  isVerifyEmailSent = true;
                                 });
                               });
                               showSnackBar(
