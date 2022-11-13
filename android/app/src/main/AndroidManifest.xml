@@ -9,7 +9,7 @@
         android:value="false" />
 <!--    till here-->
    <application
-        android:label="chat_room"
+        android:label="chatEx"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
