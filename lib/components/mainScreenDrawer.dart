@@ -80,7 +80,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.5,
+                                          0.4,
                                       child: Text(
                                         userName,
                                         maxLines: 1,
