@@ -40,7 +40,7 @@ class AuthService {
     _auth.signOut();
   }
 
-  static void pushMainScreenRoutine(BuildContext context) async {
+  static Future<void> pushMainScreenRoutine(BuildContext context) async {
     final _auth = FirebaseAuth.instance;
     final _fireStore = FirebaseFirestore.instance;
     final loggedUser = _auth.currentUser;

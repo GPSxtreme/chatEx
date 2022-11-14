@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'components/groupCreatePopUp.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
+import 'dart:io';
 
 const kTextFieldInputDecoration = InputDecoration(
   hintText: '',
@@ -144,6 +145,18 @@ class HelperFunctions {
           androidPackageName: 'com.google.android.gm', openStore: true);
     } catch (e) {
       showSnackBar(context, "$e", 2000);
+    }
+  }
+
+  static Future<bool> checkUserConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } on SocketException catch (_) {
+      return false;
     }
   }
 }

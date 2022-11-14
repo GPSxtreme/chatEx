@@ -60,7 +60,7 @@ class _profileState extends State<profileCreate> {
       Reference ref = FirebaseStorage.instance
           .ref()
           .child("userProfilePictures/${loggedUser.uid}.jpg");
-      await ref.putFile(File(image!.path));
+      await ref.putFile(File(image.path));
       ref.getDownloadURL().then((val) {
         setState(() {
           imageUrl = val;
@@ -214,7 +214,7 @@ class _profileState extends State<profileCreate> {
                       ),
                       roundedBtn(
                           title: 'Finish',
-                          onPressed: () {
+                          onPressed: () async {
                             if (userName.isNotEmpty &&
                                 phoneNumber.isNotEmpty &&
                                 phoneNumber.length == 10 &&
@@ -234,7 +234,11 @@ class _profileState extends State<profileCreate> {
                                   "about": about,
                                   "profileImgLink": imageUrl,
                                 });
-                                AuthService.pushMainScreenRoutine(context);
+                                await AuthService.pushMainScreenRoutine(
+                                    context);
+                                setState(() {
+                                  showLoader = false;
+                                });
                               } on FirebaseAuthException catch (e) {
                                 setState(() {
                                   showLoader = false;
