@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chat_room/consts.dart';
 import 'package:chat_room/components/groupTile.dart';
 import 'package:chat_room/components/mainScreenDrawer.dart';
+import 'package:chat_room/services/themeDataService.dart';
 
 //global variables
 dynamic loggedUser;
@@ -26,14 +27,27 @@ class _MainScreenState extends State<MainScreen> {
   Stream? groups;
   late final userChats;
   late final userDetails;
-
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
+  MainScreenTheme themeData = MainScreenTheme();
 
   @override
   void initState() {
     super.initState();
+    themeData.addListener(themeListener);
     getCurrentUser();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    themeData.removeListener(themeListener);
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   //class functions
@@ -128,25 +142,39 @@ class _MainScreenState extends State<MainScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: MainScreenTheme.mainScreenBg,
         appBar: AppBar(
-          backgroundColor: Colors.black12,
+          backgroundColor: MainScreenTheme.mainScreenAppBarBg,
           elevation: 0,
           title: Text(
             "ChatEx",
             style: GoogleFonts.poppins(
-                color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
+                color: MainScreenTheme.style0()
+                    .appBarTheme
+                    .actionsIconTheme!
+                    .color,
+                fontSize: 27,
+                fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
             IconButton(
                 onPressed: () {
+                  if (MainScreenTheme.mainScreenBg == Colors.black) {
+                    MainScreenTheme().brown();
+                  } else {
+                    MainScreenTheme().dark();
+                  }
+                },
+                icon: const Icon(Icons.swap_horiz_outlined)),
+            IconButton(
+                onPressed: () {
                   Navigator.pushNamed(context, SearchGroupsScreen.id);
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.search,
-                  color: Colors.white,
-                ))
+                  color: MainScreenTheme.mainScreenAppBarSearchIcon,
+                )),
           ],
         ),
         drawer: MainScreenDrawer(
