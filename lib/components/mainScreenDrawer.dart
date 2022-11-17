@@ -1,4 +1,5 @@
 import 'package:chat_room/pages/profileUserShow.dart';
+import 'package:chat_room/pages/settingsScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -169,7 +170,9 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                 ),
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, SettingsScreen.id);
+                },
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 leading: const Icon(

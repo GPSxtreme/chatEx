@@ -160,15 +160,6 @@ class _MainScreenState extends State<MainScreen> {
           actions: [
             IconButton(
                 onPressed: () {
-                  if (MainScreenTheme.mainScreenBg == Colors.black) {
-                    MainScreenTheme().brown();
-                  } else {
-                    MainScreenTheme().dark();
-                  }
-                },
-                icon: const Icon(Icons.swap_horiz_outlined)),
-            IconButton(
-                onPressed: () {
                   Navigator.pushNamed(context, SearchGroupsScreen.id);
                 },
                 icon: Icon(
