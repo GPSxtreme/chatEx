@@ -28,5 +28,15 @@ class LocalDataService{
     String? userDpUrl = prefs.getString('userDpUrl');
     return userDpUrl;
   }
+  //themes storage
+  static Future setUserTheme(String themeHexCode)async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeHexCode', themeHexCode);
+  }
+  static Future<String?> getUserTheme()async{
+    final prefs = await SharedPreferences.getInstance();
+    String? userTheme = prefs.getString('themeHexCode');
+    return userTheme;
+  }
 
 }

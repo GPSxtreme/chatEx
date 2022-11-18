@@ -1,6 +1,7 @@
 import 'package:chat_room/pages/profileUserShow.dart';
 import 'package:chat_room/pages/settingsScreen.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,8 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
     return Drawer(
         elevation: 10,
         width: MediaQuery.of(context).size.width * 0.8,
-        backgroundColor: HexColor("#222222"),
+        // backgroundColor: HexColor("#222222"),
+        backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("#222222"):MainScreenTheme.mainScreenBg,
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0),
           child: Column(

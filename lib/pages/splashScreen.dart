@@ -1,5 +1,6 @@
 import 'package:chat_room/consts.dart';
 import 'package:chat_room/pages/welcomeScreen.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void coRoutine() async {
     try {
       bool isOnline = await HelperFunctions.checkUserConnection();
+      await ThemeDataService.setUpAppThemes();
       if (isOnline) {
         bool isLoggedIn = _auth.currentUser != null ? true : false;
         Future.delayed(const Duration(milliseconds: 1400), () async {
