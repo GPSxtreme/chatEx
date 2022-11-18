@@ -149,10 +149,7 @@ class _MainScreenState extends State<MainScreen> {
           title: Text(
             "ChatEx",
             style: GoogleFonts.poppins(
-                color: MainScreenTheme.style0()
-                    .appBarTheme
-                    .actionsIconTheme!
-                    .color,
+                color: MainScreenTheme.mainScreenAppBarBgTitle,
                 fontSize: 27,
                 fontWeight: FontWeight.bold),
           ),

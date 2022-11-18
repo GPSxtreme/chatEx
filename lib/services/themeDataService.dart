@@ -5,23 +5,13 @@ class MainScreenTheme with ChangeNotifier {
   static Color mainScreenAppBarBg = Colors.black12;
   static Color mainScreenAppBarSearchIcon = Colors.white;
   static Color mainScreenAppBarBgTitle = Colors.white;
-  brown() {
-    mainScreenBg = Colors.brown;
+  customTheme(Color color) {
+    mainScreenBg = color;
     notifyListeners();
   }
 
   dark() {
     mainScreenBg = Colors.black;
     notifyListeners();
-  }
-
-  static ThemeData style0() {
-    return ThemeData(
-      backgroundColor: mainScreenBg,
-      appBarTheme: AppBarTheme(
-          actionsIconTheme: IconThemeData(color: mainScreenAppBarSearchIcon),
-          backgroundColor: mainScreenAppBarBg,
-          toolbarTextStyle: TextStyle(color: mainScreenAppBarBgTitle)),
-    );
   }
 }

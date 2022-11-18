@@ -1,3 +1,4 @@
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -39,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 25),
                   child: Column(children: [
                     Text(
                       "App Theme",
@@ -63,12 +64,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: const [
+                      children: [
                         ThemeTile(
                           tileColor: Colors.brown,
+                          fun: MainScreenTheme().customTheme(Colors.brown),
                         ),
                         ThemeTile(
                           tileColor: Colors.orange,
+                          fun: MainScreenTheme().customTheme(Colors.orange),
                         ),
                       ],
                     ),
@@ -77,12 +80,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: const [
+                      children: [
                         ThemeTile(
                           tileColor: Colors.indigo,
+                          fun: MainScreenTheme().customTheme(Colors.indigo),
                         ),
                         ThemeTile(
                           tileColor: Colors.teal,
+                          fun: MainScreenTheme().customTheme(Colors.teal),
                         ),
                       ],
                     ),
@@ -98,8 +103,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 }
 
 class ThemeTile extends StatefulWidget {
-  const ThemeTile({super.key, required this.tileColor});
+  const ThemeTile({super.key, required this.tileColor, required this.fun});
   final Color tileColor;
+  final Function fun;
   @override
   State<ThemeTile> createState() => _ThemeTileState();
 }
@@ -118,6 +124,7 @@ class _ThemeTileState extends State<ThemeTile> {
           setState(() {
             isSelected = true;
           });
+          widget.fun;
         }
       },
       child: Container(
