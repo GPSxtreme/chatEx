@@ -11,6 +11,8 @@ import '../consts.dart';
 import 'package:chat_room/services/localDataService.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../services/themeDataService.dart';
+
 class profileUserShow extends StatefulWidget {
   static String id = 'profileUser_screen';
   const profileUserShow({Key? key}) : super(key: key);
@@ -29,11 +31,27 @@ class _profileUserShowState extends State<profileUserShow> {
   bool isLoading = false;
   String userDpUrl = "";
   NetworkImage? networkImg;
+  MainScreenTheme themeData = MainScreenTheme();
+
+  @override
+  void dispose() {
+    super.dispose();
+    themeData.removeListener(themeListener);
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //class methods
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    themeData.addListener(themeListener);
+
     fetchUserDetails();
   }
 
@@ -74,7 +92,7 @@ class _profileUserShowState extends State<profileUserShow> {
             ]
           ],
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: MainScreenTheme.mainScreenBg,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -202,7 +220,7 @@ class _profileUserShowState extends State<profileUserShow> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
-                                color: HexColor("222222"),
+                                color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(8))),
                             child: Padding(

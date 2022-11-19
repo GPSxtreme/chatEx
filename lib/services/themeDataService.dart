@@ -8,6 +8,8 @@ class ThemeDataService{
    if(userTheme != null && userTheme.isNotEmpty){
      MainScreenTheme().customTheme(userTheme);
       SettingsScreenTheme().customTheme(userTheme);
+   }else if(userTheme == ""){
+     resetToDark();
    }
   }
   static setAppTheme(String hexCode){

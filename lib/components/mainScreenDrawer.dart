@@ -28,6 +28,26 @@ class MainScreenDrawer extends StatefulWidget {
 class _MainScreenDrawerState extends State<MainScreenDrawer> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
+  MainScreenTheme themeData = MainScreenTheme();
+
+  @override
+  void initState() {
+    super.initState();
+    themeData.addListener(themeListener);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    themeData.removeListener(themeListener);
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   popOutOfContext() {
     Navigator.of(context).pop();
   }

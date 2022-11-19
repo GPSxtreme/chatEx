@@ -1,4 +1,5 @@
 import 'package:chat_room/pages/profileUserShow.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -95,7 +96,7 @@ class _chatScreenState extends State<chatScreen> {
               color: Colors.black,
             ))
         : Scaffold(
-            backgroundColor: Colors.black12,
+            backgroundColor: MainScreenTheme.mainScreenBg,
             appBar: AppBar(
               title: Text(
                 data["groupName"],

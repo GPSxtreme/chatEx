@@ -64,7 +64,11 @@ InputDecoration kSearchGroupInputDecoration = InputDecoration(
 );
 
 void showSnackBar(BuildContext buildContext, String txt, int duration,
-    {Color? bgColor}) {
+    {Color? bgColor,String? hexCode}) {
+  Color bgNormalColor = Colors.red;
+  if(bgColor != null){
+    bgNormalColor = bgColor;
+  }
   ScaffoldMessenger.of(buildContext).showSnackBar(SnackBar(
     content: SizedBox(
       width: MediaQuery.of(buildContext).size.width * 0.80,
@@ -77,7 +81,7 @@ void showSnackBar(BuildContext buildContext, String txt, int duration,
         maxLines: 2,
       ),
     ),
-    backgroundColor: bgColor ?? Colors.red,
+    backgroundColor: hexCode != null ? HexColor(hexCode):bgNormalColor,
     shape: const OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(10)),
     ),

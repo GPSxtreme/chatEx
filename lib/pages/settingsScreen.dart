@@ -89,10 +89,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       children: const [
                         ThemeTile(
-                          tileColorHexCode: "a0522d",
+                          tileColorHexCode: "501b23",
                         ),
                         ThemeTile(
-                          tileColorHexCode: "006004",
+                          tileColorHexCode: "961e7c",
                         ),
                       ],
                     ),
@@ -120,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onPressed: () async{
                             await LocalDataService.setUserTheme(SettingsScreen.selectedThemeColor);
                             ThemeDataService.setAppTheme(SettingsScreen.selectedThemeColor);
-                            showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,bgColor:Colors.indigo);
+                            showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,hexCode: SettingsScreen.selectedThemeColor);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,

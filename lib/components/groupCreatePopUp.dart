@@ -2,13 +2,13 @@ import 'package:chat_room/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import  'package:chat_room/consts.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:chat_room/services/cloudStorageService.dart';
-import 'package:chat_room/pages/mainScreen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'dart:io';
+
+import '../services/themeDataService.dart';
 
 //Group create pop up
 class GroupCreatePopUp extends StatefulWidget {
@@ -25,6 +25,26 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
   String groupName = "";
   final groupNameTextController = TextEditingController();
   String title = "Create a group";
+  MainScreenTheme themeData = MainScreenTheme();
+
+  @override
+  void initState() {
+    super.initState();
+    themeData.addListener(themeListener);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    themeData.removeListener(themeListener);
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
 
   createGroup()async{
     setState(() {
@@ -46,7 +66,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: HexColor("#222222"),
+      backgroundColor: MainScreenTheme.mainScreenBg,
       title: Text(
         title,
         textAlign: TextAlign.center,

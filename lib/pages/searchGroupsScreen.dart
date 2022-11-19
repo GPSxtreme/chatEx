@@ -1,4 +1,5 @@
 import 'package:chat_room/consts.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,12 +24,27 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
   List<Map> allGroups = [];
   List<GroupSearchQueryTile> showGrpTiles = [];
   bool isLocalListLoading = true;
+  MainScreenTheme themeData = MainScreenTheme();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    themeData.addListener(themeListener);
     fetchAllGroups();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    themeData.removeListener(themeListener);
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
 
   fetchAllGroups()async{
     QuerySnapshot snapshot =  await _fireStore.collection("groups").get();
@@ -46,7 +62,7 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MainScreenTheme.mainScreenBg,
       appBar: AppBar(
         backgroundColor: Colors.black12,
         elevation: 0,
