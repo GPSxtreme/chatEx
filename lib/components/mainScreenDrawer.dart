@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../consts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class MainScreenDrawer extends StatefulWidget {
   const MainScreenDrawer(
@@ -62,8 +61,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
     return Drawer(
         elevation: 10,
         width: MediaQuery.of(context).size.width * 0.8,
-        // backgroundColor: HexColor("#222222"),
-        backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("#222222"):MainScreenTheme.mainScreenBg,
+        backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):MainScreenTheme.mainScreenBg,
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0),
           child: Column(
@@ -103,7 +101,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.4,
+                                          0.423,
                                       child: Text(
                                         userName,
                                         maxLines: 1,

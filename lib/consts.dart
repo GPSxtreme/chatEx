@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
 import 'components/groupCreatePopUp.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'dart:io';
@@ -163,4 +163,27 @@ class HelperFunctions {
       return false;
     }
   }
+  static Future<bool> checkIfLocalDirExistsInApp(String path)async{
+    final appDocDir = await getApplicationDocumentsDirectory();
+    Directory fileDir = Directory('${appDocDir.path}/$path/');
+    final doesDirExist = await fileDir.exists();
+    return doesDirExist;
+  }
+  static Future createLocalDirInApp(String path)async{
+    final appDocDir = await getApplicationDocumentsDirectory();
+    Directory fileDir = Directory('${appDocDir.path}/$path/');
+    await fileDir.create(recursive: true);
+  }
+  static Future<bool> checkIfLocalDirExistsInStorage(String path)async{
+    final appDocDir = await getExternalStorageDirectory();
+    Directory fileDir = Directory('${appDocDir?.path}/$path/');
+    final doesDirExist = await fileDir.exists();
+    return doesDirExist;
+  }
+  static Future createLocalDirInStorage(String path)async{
+    final appDocDir = await getExternalStorageDirectory();
+    Directory fileDir = Directory('${appDocDir?.path}/$path/');
+    await fileDir.create(recursive: true);
+  }
+
 }

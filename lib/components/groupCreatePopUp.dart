@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import  'package:chat_room/consts.dart';
 import 'package:chat_room/services/cloudStorageService.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'dart:io';
@@ -51,9 +52,9 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
       isGrpCreateLoading = true;
       title = "Creating...";
     });
-    String url = "";
-    url = await CloudStorageService.addGrpImageGetLink("groupProfilePictures/${widget.userUid}_$groupName.jpg",GroupCreatePopUp.image!.path);
-    await DatabaseService.addNewGroup(groupName,widget.userName,widget.userUid,url);
+    final grpId = await DatabaseService.addNewGroup(groupName,widget.userName,widget.userUid);
+    final url = await CloudStorageService.addGrpImageGetLink("groupProfilePictures/${grpId}_$groupName.jpg",GroupCreatePopUp.image!.path);
+    await DatabaseService.updateGroupDetails(grpId, "groupIcon", url);
     setState(() {
       isGrpCreateLoading = false;
       title = "Create a group";
@@ -66,7 +67,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: MainScreenTheme.mainScreenBg,
+      backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):MainScreenTheme.mainScreenBg,
       title: Text(
         title,
         textAlign: TextAlign.center,
@@ -176,7 +177,7 @@ class _PickDpCircularAvatarState extends State<PickDpCircularAvatar> {
   void pickUploadImage() async{
     final imgPath = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        imageQuality: 50
+        imageQuality: 80
     );
     setState(() {
       GroupCreatePopUp.image = imgPath;

@@ -103,7 +103,7 @@ class _chatScreenState extends State<chatScreen> {
                 style: GoogleFonts.poppins(),
               ),
               backgroundColor: Colors.black12,
-              elevation: 5,
+              elevation: 0,
               actions: [
                 Container(
                   margin:

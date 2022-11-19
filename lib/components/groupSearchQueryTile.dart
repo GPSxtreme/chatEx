@@ -65,13 +65,16 @@ class _GroupSearchQueryTileState extends State<GroupSearchQueryTile> {
                     backgroundColor: Colors.white,
                     child: CircularProgressIndicator(color: Colors.blue,strokeWidth: 15,),),
                 const SizedBox(width: 20,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name,style: GoogleFonts.poppins(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 5,),
-                    Text("Created by: $by",style: GoogleFonts.poppins(color: Colors.white,fontSize: 12),),
-                  ],
+                SizedBox(
+                  width: MediaQuery.of(context).size.width*0.5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name,style: GoogleFonts.poppins(color: Colors.white,fontSize: 19,fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,),
+                      const SizedBox(height: 5,),
+                      Text("Created by: $by",style: GoogleFonts.poppins(color: Colors.white,fontSize: 12),overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 isJoined ?

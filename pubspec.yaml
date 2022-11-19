@@ -60,6 +60,7 @@ dependencies:
   cached_network_image: ^3.2.2
   external_app_launcher: ^3.1.0
   drop_shadow: ^0.0.2+1
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_test:

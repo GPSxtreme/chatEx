@@ -3,27 +3,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService{
-  static Future addNewGroup(String name,String createdBy,String uid,String grpIcon)async{
+  static Future<String> addNewGroup(String name,String createdBy,String uid)async{
     final _fireStore = FirebaseFirestore.instance;
+    String grpId = "";
     final now = DateTime.now();
     String date = DateFormat.yMd().add_jm().format(now);
-    final newGrp = _fireStore.collection("groups").add({
-      "createdBy":createdBy,
+    await _fireStore.collection("groups").add({
       "groupId":"",
+      "groupIcon":"",
+      "createdBy":createdBy,
       "name":name,
       "createdDate":date,
-      "groupId":"",
-      "groupIcon":grpIcon,
       "members":FieldValue.arrayUnion([createdBy]),
-    }).then((docRef){
-      _fireStore.collection("groups").doc(docRef.id).update({
-        "groupId":docRef.id
+    }).then((docRef) async {
+      grpId = docRef.id;
+      await _fireStore.collection("groups").doc(docRef.id).update({
+        "groupId":grpId
       });
-      _fireStore.collection("users").doc(uid).update({
+      await _fireStore.collection("users").doc(uid).update({
         "joinedGroups":FieldValue.arrayUnion([docRef.id])
       });
       }
     );
+    return grpId;
+  }
+  static Future updateGroupDetails(String grpId,String grpField,String value)async{
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("groups").doc(grpId).update({
+      grpField : value
+    });
   }
   static Future<bool> isUserAlreadyInGrp(String grpId)async{
     final _fireStore = FirebaseFirestore.instance;
