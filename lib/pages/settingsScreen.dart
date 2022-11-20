@@ -218,7 +218,7 @@ class _ThemeTileState extends State<ThemeTile> {
           height: 100,
           decoration: BoxDecoration(
               color: HexColor(widget.tileColorHexCode),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(100),
               border:
                   isSelected ? Border.all(color: Colors.blue, width: 3) : null),
           child: Center(

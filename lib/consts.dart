@@ -176,14 +176,28 @@ class HelperFunctions {
   }
   static Future<bool> checkIfLocalDirExistsInStorage(String path)async{
     final appDocDir = await getExternalStorageDirectory();
-    Directory fileDir = Directory('${appDocDir?.path}/$path/');
+    Directory fileDir = Directory('${appDocDir?.path}/$path');
     final doesDirExist = await fileDir.exists();
     return doesDirExist;
   }
   static Future createLocalDirInStorage(String path)async{
     final appDocDir = await getExternalStorageDirectory();
-    Directory fileDir = Directory('${appDocDir?.path}/$path/');
+    Directory fileDir = Directory('${appDocDir?.path}/$path');
     await fileDir.create(recursive: true);
   }
-
+  static void clearImageCache(){
+    imageCache.clear();
+    imageCache.clearLiveImages();
+  }
+  static void scrollDown(){
+    final ScrollController _controller = ScrollController();
+    //animate scroll
+    _controller.animateTo(
+      _controller.position.maxScrollExtent,
+      duration: const Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
+    //no animate scroll
+    _controller.jumpTo(_controller.position.maxScrollExtent);
+  }
 }

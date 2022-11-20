@@ -5,25 +5,19 @@ import 'dart:io';
 import 'package:ionicons/ionicons.dart';
 
 class ImagePickerCircleAvatar extends StatefulWidget {
-  const ImagePickerCircleAvatar({Key? key, required this.imageUrl})
+  const ImagePickerCircleAvatar({Key? key, required this.userDpPath})
       : super(key: key);
   static dynamic image;
-  final String imageUrl;
+  final String userDpPath;
   @override
   State<ImagePickerCircleAvatar> createState() => _ImagePickerCircleAvatar();
 }
 
 class _ImagePickerCircleAvatar extends State<ImagePickerCircleAvatar> {
-  Map data = {};
-  @override
-  void initState() {
-    super.initState();
-    ImagePickerCircleAvatar.image = null;
-  }
 
   void pickUploadImage() async {
     final imgPath = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+        .pickImage(source: ImageSource.gallery, imageQuality: 80);
     setState(() {
       ImagePickerCircleAvatar.image = imgPath;
     });
@@ -35,9 +29,9 @@ class _ImagePickerCircleAvatar extends State<ImagePickerCircleAvatar> {
         onTap: pickUploadImage,
         child: CircleAvatar(
           radius: 90,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.white12,
           backgroundImage: ImagePickerCircleAvatar.image == null
-              ? NetworkImage(widget.imageUrl)
+              ? FileImage(File(widget.userDpPath))
               : FileImage(File(ImagePickerCircleAvatar.image.path))
                   as ImageProvider,
           child: Container(

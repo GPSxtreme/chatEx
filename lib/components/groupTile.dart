@@ -36,13 +36,13 @@ class _GroupTileState extends State<GroupTile> {
         });
   }
   Future checkLocalGroupIcon()async{
-    bool isDirExist = await HelperFunctions.checkIfLocalDirExistsInApp("groupProfilePictures");
+    bool isDirExist = await HelperFunctions.checkIfLocalDirExistsInStorage("groupProfilePictures");
     if(!isDirExist){
-      HelperFunctions.createLocalDirInApp("groupProfilePictures");
+     await HelperFunctions.createLocalDirInStorage("groupProfilePictures");
     }
-    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocDir = await getExternalStorageDirectory();
     String imgName = "${widget.groupId}_$name.jpg";
-    String filePath = "${appDocDir.path}/$imgName";
+    String filePath = "${appDocDir?.path}/groupProfilePictures/$imgName";
     final file = File(filePath);
     bool doesFileExist = await file.exists();
     if(!doesFileExist){

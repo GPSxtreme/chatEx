@@ -52,7 +52,7 @@ class _profileState extends State<profileCreate> {
 
   void pickUploadImage() async {
     final image = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+        .pickImage(source: ImageSource.gallery, imageQuality: 80);
     if (image != null) {
       setState(() {
         showLoader = true;

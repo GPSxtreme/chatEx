@@ -49,12 +49,12 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
   Future checkLocalProfilePicture()async{
     bool isDirExist = await HelperFunctions.checkIfLocalDirExistsInStorage("userData");
     if(!isDirExist){
-      HelperFunctions.createLocalDirInApp("groupProfilePictures");
+      await HelperFunctions.createLocalDirInStorage("userData");
     }
     final appDocDir = await getExternalStorageDirectory();
     String imgName = "${widget.userUid}_${widget.userName}.jpg";
     String cloudImgName = "${widget.userUid}.jpg";
-    String filePath = "${appDocDir?.path}/$imgName";
+    String filePath = "${appDocDir?.path}/userData/$imgName";
     final file = File(filePath);
     bool doesFileExist = await file.exists();
     if(!doesFileExist){
@@ -128,11 +128,11 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                               backgroundColor: Colors.white,
                               backgroundImage: dp(),
                             ): const CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Colors.white,
-                        child: CircularProgressIndicator(
-                          color: Colors.blue,
-                          strokeWidth: 16,
+                              radius: 35,
+                              backgroundColor: Colors.white,
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                                strokeWidth: 8,
                         ),
                       ),
                             const SizedBox(
@@ -172,7 +172,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                           arguments: {
                                             "senderUid": widget.userUid,
                                             "isMe": true,
-                                            "userProfilePicturePath":userProfilePicturePath
+                                            "userProfilePicturePath":userProfilePicturePath,
                                           });
                                     },
                                     child: Container(
