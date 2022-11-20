@@ -38,6 +38,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
   void initState() {
     super.initState();
     themeData.addListener(themeListener);
+    checkLocalProfilePicture();
   }
 
   @override
@@ -111,7 +112,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                     ImageProvider<Object>? dp(){
                       if(userProfilePicturePath != ""){
                         return  FileImage(File(userProfilePicturePath));
-                      }else if (snapshot.data["groupIcon"] != ""){
+                      }else if (snapshot.data["profileImgLink"] != ""){
                         return NetworkImage(snapshot.data["profileImgLink"]);
                       }
                       return null;
@@ -121,11 +122,19 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                         padding: const EdgeInsets.only(left: 20),
                         child: Row(
                           children: [
+                        (userProfilePicturePath != "" && snapshot.data["profileImgLink"] != "")?
                             CircleAvatar(
                               radius: 35,
                               backgroundColor: Colors.white,
                               backgroundImage: dp(),
-                            ),
+                            ): const CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.white,
+                        child: CircularProgressIndicator(
+                          color: Colors.blue,
+                          strokeWidth: 16,
+                        ),
+                      ),
                             const SizedBox(
                               width: 10,
                             ),
@@ -162,7 +171,8 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                           context, profileUserShow.id,
                                           arguments: {
                                             "senderUid": widget.userUid,
-                                            "isMe": true
+                                            "isMe": true,
+                                            "userProfilePicturePath":userProfilePicturePath
                                           });
                                     },
                                     child: Container(

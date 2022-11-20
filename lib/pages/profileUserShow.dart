@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:chat_room/components/imagePickerCircleAvatar.dart';
 import '../consts.dart';
 import 'package:chat_room/services/localDataService.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 
 import '../services/themeDataService.dart';
 
@@ -51,7 +51,6 @@ class _profileUserShowState extends State<profileUserShow> {
     // TODO: implement initState
     super.initState();
     themeData.addListener(themeListener);
-
     fetchUserDetails();
   }
 
@@ -113,8 +112,6 @@ class _profileUserShowState extends State<profileUserShow> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> dataFetched =
                           snapshot.data!.data() as Map<String, dynamic>;
-                      LocalDataService.setUserDpUrl(
-                          dataFetched["profileImgLink"]);
                       void openCaller() async {
                         final phNo = "tel:${dataFetched["phoneNumber"]}";
                         try {
@@ -139,11 +136,28 @@ class _profileUserShowState extends State<profileUserShow> {
                             height: 30,
                           ),
                           if (!inEditMode) ...[
-                            networkImg != null
+                            if(!isMe) ...[
+                              dataFetched["profileImgLink"].toString().isNotEmpty ?
+                              CircleAvatar(
+                                radius: 90,
+                                backgroundColor: Colors.white,
+                                backgroundImage: NetworkImage(dataFetched["profileImgLink"]),
+                              )
+                                  : const CircleAvatar(
+                                radius: 90,
+                                backgroundColor: Colors.white,
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                  strokeWidth: 10,
+                                ),
+                              ),
+                            ]
+                            else ...[
+                            dataPassed["userProfilePicturePath"] != null
                                 ? CircleAvatar(
                                     radius: 90,
                                     backgroundColor: Colors.white,
-                                    backgroundImage: networkImg,
+                                    backgroundImage: FileImage(File(dataPassed["userProfilePicturePath"])),
                                   )
                                 : const CircleAvatar(
                                     radius: 90,
@@ -153,6 +167,7 @@ class _profileUserShowState extends State<profileUserShow> {
                                       strokeWidth: 10,
                                     ),
                                   ),
+                            ]
                           ],
                           if (inEditMode) ...[
                             ImagePickerCircleAvatar(imageUrl: userDpUrl)
