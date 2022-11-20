@@ -6,9 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import '../consts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
+import 'dart:io';
+
+import '../services/cloudStorageService.dart';
 
 class MainScreenDrawer extends StatefulWidget {
   const MainScreenDrawer(
@@ -27,6 +31,7 @@ class MainScreenDrawer extends StatefulWidget {
 class _MainScreenDrawerState extends State<MainScreenDrawer> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
+  String userProfilePicturePath = "";
   MainScreenTheme themeData = MainScreenTheme();
 
   @override
@@ -39,6 +44,34 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
   void dispose() {
     super.dispose();
     themeData.removeListener(themeListener);
+  }
+  Future checkLocalProfilePicture()async{
+    bool isDirExist = await HelperFunctions.checkIfLocalDirExistsInStorage("userData");
+    if(!isDirExist){
+      HelperFunctions.createLocalDirInApp("groupProfilePictures");
+    }
+    final appDocDir = await getExternalStorageDirectory();
+    String imgName = "${widget.userUid}_${widget.userName}.jpg";
+    String cloudImgName = "${widget.userUid}.jpg";
+    String filePath = "${appDocDir?.path}/$imgName";
+    final file = File(filePath);
+    bool doesFileExist = await file.exists();
+    if(!doesFileExist){
+      String result = await CloudStorageService.downloadLocalImg(cloudImgName,filePath,"userProfilePictures");
+      if(result != "error"){
+        if(mounted){
+          setState(() {
+            userProfilePicturePath = result;
+          });
+        }
+      }
+    }else{
+      if(mounted){
+        setState(() {
+          userProfilePicturePath = filePath;
+        });
+      }
+    }
   }
 
   themeListener() {
@@ -75,6 +108,14 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                   if (snapshot.hasData) {
                     String userName = snapshot.data["userName"];
                     String userDpUrl = snapshot.data["profileImgLink"];
+                    ImageProvider<Object>? dp(){
+                      if(userProfilePicturePath != ""){
+                        return  FileImage(File(userProfilePicturePath));
+                      }else if (snapshot.data["groupIcon"] != ""){
+                        return NetworkImage(snapshot.data["profileImgLink"]);
+                      }
+                      return null;
+                    }
                     return SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20),
@@ -83,7 +124,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                             CircleAvatar(
                               radius: 35,
                               backgroundColor: Colors.white,
-                              backgroundImage: NetworkImage(userDpUrl),
+                              backgroundImage: dp(),
                             ),
                             const SizedBox(
                               width: 10,
