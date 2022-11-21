@@ -1,4 +1,5 @@
 import 'package:chat_room/pages/profileUserShow.dart';
+import 'package:chat_room/services/databaseService.dart';
 import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +29,7 @@ class _chatScreenState extends State<chatScreen> {
   String msgTxt = '';
   dynamic userDetails = {};
   bool _isLoading = true;
+  bool showLoader = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -68,19 +70,24 @@ class _chatScreenState extends State<chatScreen> {
     }
     Navigator.of(context).pop();
   }
-
+  superDeleteGroup()async{
+    leaveGroup();
+    await DatabaseService.deleteGroup(data["groupId"],"groupProfilePictures/${data["groupId"]}_${data["groupName"]}.jpg");
+  }
   popOutOfContext() {
     Navigator.of(context).pop();
   }
-
-  leaveGroup() async {
-    final ins =
-        await _fireStore.collection("users").doc(loggedUser.uid).update({
-      "joinedGroups": FieldValue.arrayRemove([data["groupId"]])
-    });
+  popOfPage(){
     final nav = Navigator.of(context);
     nav.pop();
     nav.pop();
+  }
+
+  leaveGroup() async {
+        await _fireStore.collection("users").doc(loggedUser.uid).update({
+      "joinedGroups": FieldValue.arrayRemove([data["groupId"]])
+    });
+    popOfPage();
   }
 
   @override
@@ -93,101 +100,120 @@ class _chatScreenState extends State<chatScreen> {
         ? ModalProgressHUD(
             inAsyncCall: true,
             child: Container(
-              color: Colors.black,
+              color: MainScreenTheme.mainScreenBg,
             ))
-        : Scaffold(
-            backgroundColor: MainScreenTheme.mainScreenBg,
-            appBar: AppBar(
-              title: Text(
-                data["groupName"],
-                style: GoogleFonts.poppins(),
-              ),
-              backgroundColor: Colors.black12,
-              elevation: 0,
-              actions: [
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      color: Colors.white24),
-                  child: Row(children: [
-                    if (userDetails["userName"] == data["createdBy"]) ...[
+        : ModalProgressHUD(
+      inAsyncCall: showLoader,
+          child: Scaffold(
+              backgroundColor: MainScreenTheme.mainScreenBg,
+              appBar: AppBar(
+                title: Text(
+                  data["groupName"],
+                  style: GoogleFonts.poppins(),
+                ),
+                backgroundColor: Colors.black12,
+                elevation: 0,
+                actions: [
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: Colors.white24),
+                    child: Row(children: [
+                      if (userDetails["userName"] == data["createdBy"]) ...[
+                        TextButton(
+                            onPressed: () {
+                              showDialogBox(
+                                context,
+                                'DELETE ALL MESSAGES?',
+                                "This process is permanent and cannot be undone",
+                                Colors.red,
+                                superUserDelAllMsg,
+                                popOutOfContext,
+                              );
+                            },
+                            child: const Icon(
+                              Icons.message,
+                              color: Colors.red,
+                              size: 25,
+                            )),
+                        TextButton(
+                            onPressed: () {
+                             showDialogBox(
+                               context,
+                               'DELETE GROUP?',
+                               "This process is permanent and cannot be undone",
+                               Colors.red,
+                               superDeleteGroup,
+                               popOfPage,
+                             );
+                            },
+                            child: const Icon(
+                              Ionicons.trash_bin,
+                              color: Colors.red,
+                              size: 25,
+                            )),
+                      ],
                       TextButton(
                           onPressed: () {
                             showDialogBox(
-                              context,
-                              'DELETE ALL MESSAGES?',
-                              "This process is permanent and cannot be undone",
-                              Colors.red,
-                              superUserDelAllMsg,
-                              popOutOfContext,
-                            );
+                                context,
+                                'Leave Group?',
+                                "You can join the group again.",
+                                Colors.red,
+                                leaveGroup,
+                                popOutOfContext);
                           },
                           child: const Icon(
-                            Ionicons.trash_bin,
+                            Ionicons.log_out_outline,
                             color: Colors.red,
                             size: 25,
                           )),
-                    ],
-                    TextButton(
+                      TextButton(
                         onPressed: () {
-                          showDialogBox(
-                              context,
-                              'Leave Group?',
-                              "You can join the group again.",
-                              Colors.red,
-                              leaveGroup,
-                              popOutOfContext);
+                          showSnackBar(
+                              context, 'Coming soon under progress :)', 1500,
+                              bgColor: Colors.indigo);
                         },
                         child: const Icon(
-                          Ionicons.log_out_outline,
-                          color: Colors.red,
+                          Ionicons.information_circle_outline,
+                          color: Colors.blue,
                           size: 25,
-                        )),
-                    TextButton(
-                      onPressed: () {
-                        showSnackBar(
-                            context, 'Coming soon under progress :)', 1500,
-                            bgColor: Colors.indigo);
-                      },
-                      child: const Icon(
-                        Ionicons.information_circle_outline,
-                        color: Colors.blue,
-                        size: 25,
-                      ),
-                    )
-                  ]),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const SizedBox(
-                    height: 20,
+                        ),
+                      )
+                    ]),
                   ),
-                  Expanded(
-                    child: Column(children: const [MessageStream()]),
-                  ),
-                  // Expanded(child: Container()),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: buildTextField(context),
-                      ),
-                    ],
-                  )
                 ],
               ),
+              body: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                      child: Column(children: const [MessageStream()]),
+                    ),
+                    // Expanded(child: Container()),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: buildTextField(context),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
             ),
-          );
+        );
   }
 
   //TextField chat screen

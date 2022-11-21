@@ -31,9 +31,12 @@ class _GroupTileState extends State<GroupTile> {
   }
   Future getGroupDetails() async {
     final _fireStore = FirebaseFirestore.instance;
-        await _fireStore.collection("groups").doc(widget.groupId).get().then((value){
-                name = value["name"];
-        });
+    final groupDetails = await _fireStore.collection("groups").doc(widget.groupId).get();
+    if(groupDetails.exists){
+      name = groupDetails["name"];
+    }else{
+      super.dispose();
+    }
   }
   Future checkLocalGroupIcon()async{
     bool isDirExist = await HelperFunctions.checkIfLocalDirExistsInStorage("groupProfilePictures");

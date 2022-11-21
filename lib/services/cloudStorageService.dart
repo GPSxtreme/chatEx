@@ -15,6 +15,9 @@ class CloudStorageService {
     });
     return url;
   }
+  static Future removeCloudStorageFile(String filePath)async{
+    await FirebaseStorage.instance.ref().child(filePath).delete();
+  }
 
   static Future updateUserProfilePic(dynamic imagePath) async {
     final _auth = FirebaseAuth.instance;
