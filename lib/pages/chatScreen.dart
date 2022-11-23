@@ -1,3 +1,4 @@
+import 'package:chat_room/pages/groupInfoScreen.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
 import 'package:chat_room/services/databaseService.dart';
 import 'package:chat_room/services/themeDataService.dart';
@@ -172,9 +173,7 @@ class _chatScreenState extends State<chatScreen> {
                           )),
                       TextButton(
                         onPressed: () {
-                          showSnackBar(
-                              context, 'Coming soon under progress :)', 1500,
-                              bgColor: Colors.indigo);
+                          Navigator.pushNamed(context, GroupInfoScreen.id,arguments:{"groupId":data["groupId"],"groupImgPath":data["groupImgPath"],"groupName":data["groupName"]} );
                         },
                         child: const Icon(
                           Ionicons.information_circle_outline,

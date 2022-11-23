@@ -1,3 +1,4 @@
+import 'package:chat_room/pages/groupInfoScreen.dart';
 import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/settingsScreen.dart';
 import 'package:chat_room/pages/splashScreen.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         chatScreen.id: (context) => chatScreen(),
         profileUserShow.id: (context) => const profileUserShow(),
         SettingsScreen.id: (context) => const SettingsScreen(),
+        GroupInfoScreen.id: (context) => const GroupInfoScreen(),
       },
     );
   }

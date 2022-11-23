@@ -150,8 +150,8 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
         ),
       );
     }
-
   }
+
   void localSearchGroup(String query){
     if(searchController.text.isEmpty){
       showGrpTiles = [];

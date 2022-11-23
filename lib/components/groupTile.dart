@@ -88,7 +88,8 @@ class _GroupTileState extends State<GroupTile> {
                   Navigator.pushNamed(context, chatScreen.id, arguments: {
                     "groupId": widget.groupId,
                     "groupName": snapshot.data["name"],
-                    "createdBy": snapshot.data["createdBy"]
+                    "createdBy": snapshot.data["createdBy"],
+                    "groupImgPath":groupImgPath
                   });
                 },
                 child: ListTile(
