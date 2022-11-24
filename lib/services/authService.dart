@@ -41,18 +41,22 @@ class AuthService {
   }
 
   static Future<void> pushMainScreenRoutine(BuildContext context) async {
-    final _auth = FirebaseAuth.instance;
-    final _fireStore = FirebaseFirestore.instance;
-    final loggedUser = _auth.currentUser;
-    final userDetails =
-        await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
-    Navigator.popAndPushNamed(context, MainScreen.id, arguments: {
-      "img": userDetails["profileImgLink"],
-      "name": userDetails["userName"],
-      "email": userDetails["email"],
-      "phNo": userDetails["phoneNumber"],
-      "uid": loggedUser?.uid
-    });
+    try{
+      final _auth = FirebaseAuth.instance;
+      final _fireStore = FirebaseFirestore.instance;
+      final loggedUser = _auth.currentUser;
+      final userDetails =
+      await _fireStore.collection("users").doc(_auth.currentUser?.uid).get();
+      Navigator.popAndPushNamed(context, MainScreen.id, arguments: {
+        "img": userDetails["profileImgLink"],
+        "name": userDetails["userName"],
+        "email": userDetails["email"],
+        "phNo": userDetails["phoneNumber"],
+        "uid": loggedUser?.uid
+      });
+    }catch(e){
+      print("push main screen routine error: $e");
+    }
   }
 
   static Future addFcmTokenToLoggedUser() async {

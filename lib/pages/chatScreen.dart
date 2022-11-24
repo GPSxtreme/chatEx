@@ -1,6 +1,5 @@
 import 'package:chat_room/pages/groupInfoScreen.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
-import 'package:chat_room/services/databaseService.dart';
 import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,6 +30,7 @@ class _chatScreenState extends State<chatScreen> {
   dynamic userDetails = {};
   bool _isLoading = true;
   bool showLoader = false;
+  bool isAdmin = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -54,49 +54,15 @@ class _chatScreenState extends State<chatScreen> {
     }
   }
 
-  superUserDelAllMsg() async {
-    final messages = await _fireStore
-        .collection("groups")
-        .doc(data["groupId"])
-        .collection("messages")
-        .get();
-    final docs = messages.docs;
-    for (var doc in docs) {
-      _fireStore
-          .collection("groups")
-          .doc(data["groupId"])
-          .collection("messages")
-          .doc(doc.id)
-          .delete();
-    }
-    Navigator.of(context).pop();
-  }
-  superDeleteGroup()async{
-    leaveGroup();
-    await DatabaseService.deleteGroup(data["groupId"],"groupProfilePictures/${data["groupId"]}_${data["groupName"]}.jpg");
-  }
-  popOutOfContext() {
-    Navigator.of(context).pop();
-  }
-  popOfPage(){
-    final nav = Navigator.of(context);
-    nav.pop();
-    nav.pop();
-  }
-
-  leaveGroup() async {
-        await _fireStore.collection("users").doc(loggedUser.uid).update({
-      "joinedGroups": FieldValue.arrayRemove([data["groupId"]])
-    });
-    popOfPage();
-  }
-
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty
         ? data
         : ModalRoute.of(context)?.settings.arguments as Map;
     grpId = data['groupId'];
+    if(userDetails["userName"] == data["createdBy"]){
+      isAdmin = true;
+    }
     return _isLoading
         ? ModalProgressHUD(
             inAsyncCall: true,
@@ -115,101 +81,33 @@ class _chatScreenState extends State<chatScreen> {
                 backgroundColor: Colors.black12,
                 elevation: 0,
                 actions: [
-                  Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: Colors.white24),
-                    child: Row(children: [
-                      if (userDetails["userName"] == data["createdBy"]) ...[
-                        TextButton(
-                            onPressed: () {
-                              showDialogBox(
-                                context,
-                                'DELETE ALL MESSAGES?',
-                                "This process is permanent and cannot be undone",
-                                Colors.red,
-                                superUserDelAllMsg,
-                                popOutOfContext,
-                              );
-                            },
-                            child: const Icon(
-                              Icons.message,
-                              color: Colors.red,
-                              size: 25,
-                            )),
-                        TextButton(
-                            onPressed: () {
-                             showDialogBox(
-                               context,
-                               'DELETE GROUP?',
-                               "This process is permanent and cannot be undone",
-                               Colors.red,
-                               superDeleteGroup,
-                               popOfPage,
-                             );
-                            },
-                            child: const Icon(
-                              Ionicons.trash_bin,
-                              color: Colors.red,
-                              size: 25,
-                            )),
-                      ],
-                      TextButton(
-                          onPressed: () {
-                            showDialogBox(
-                                context,
-                                'Leave Group?',
-                                "You can join the group again.",
-                                Colors.red,
-                                leaveGroup,
-                                popOutOfContext);
-                          },
-                          child: const Icon(
-                            Ionicons.log_out_outline,
-                            color: Colors.red,
-                            size: 25,
-                          )),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, GroupInfoScreen.id,arguments:{"groupId":data["groupId"],"groupImgPath":data["groupImgPath"],"groupName":data["groupName"]} );
-                        },
-                        child: const Icon(
-                          Ionicons.information_circle_outline,
-                          color: Colors.blue,
-                          size: 25,
-                        ),
-                      )
-                    ]),
-                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, GroupInfoScreen.id,arguments:{"groupId":data["groupId"],"groupImgPath":data["groupImgPath"],"groupName":data["groupName"],"isAdmin":isAdmin} );
+                    },
+                    child: const Icon(
+                      Icons.info_outline,
+                      color: Colors.white,
+                      size: 25,
+                    ),
+                  )
                 ],
               ),
-              body: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 20,
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(children: const [MessageStream()]),
+                  ),
+                  Center(
+                    child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        height: 60,
+                        child: buildTextField(context)
                     ),
-                    Expanded(
-                      child: Column(children: const [MessageStream()]),
-                    ),
-                    // Expanded(child: Container()),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: buildTextField(context),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
         );
@@ -224,13 +122,14 @@ class _chatScreenState extends State<chatScreen> {
         fontSize: 15,
         fontWeight: FontWeight.w400,
       ),
+      cursorColor: Colors.white,
       decoration: kMsgInputContainerDecoration.copyWith(
           suffixIcon: IconButton(
               onPressed: () {
-                final now = DateTime.now();
-                String formatter = DateFormat.yMd().add_jm().format(now);
-                final sortTime = Timestamp.now();
                 if (msgTxt.isNotEmpty) {
+                  final dateTime = DateTime.now();
+                  String formatter = DateFormat.yMd().add_jm().format(dateTime);
+                  final sortTime = Timestamp.now();
                   msgTextController.clear();
                   _fireStore
                       .collection("groups")
@@ -252,7 +151,7 @@ class _chatScreenState extends State<chatScreen> {
               },
               icon: const Icon(
                 Icons.send,
-                color: Colors.blue,
+                color: Colors.white,
                 size: 30,
               ))),
       onChanged: (value) {
@@ -264,8 +163,8 @@ class _chatScreenState extends State<chatScreen> {
 
 //message fetching service
 class MessageStream extends StatelessWidget {
+  static String groupDate = "";
   const MessageStream({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -278,31 +177,60 @@ class MessageStream extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final messages = snapshot.data?.docs.reversed;
-            List<MessageBubble> messageWidgets = [];
-            for (var message in messages!) {
-              final msgSenderUid = message.get('senderUid');
-              final msgSenderUserName = message.get('senderUserName');
-              final msgTxt = message.get('text');
-              final msgTime = message.get('createdAt');
-              messageWidgets.add(MessageBubble(
-                senderUid: msgSenderUid,
-                senderUserName: msgSenderUserName,
-                text: msgTxt,
-                isMe: msgSenderUid == loggedUser.uid,
-                time: msgTime,
-                msgId: message.id,
-              ));
+            if(messages!.isNotEmpty){
+              List<MessageBubble> messageWidgets = [];
+              for (var message in messages) {
+                final msgSenderUid = message.get('senderUid');
+                final msgSenderUserName = message.get('senderUserName');
+                final msgTxt = message.get('text');
+                final msgTime = message.get('createdAt');
+                final msgDay = msgTime.toString().split(" ")[0];
+                messageWidgets.add(MessageBubble(
+                  senderUid: msgSenderUid,
+                  senderUserName: msgSenderUserName,
+                  text: msgTxt,
+                  isMe: msgSenderUid == loggedUser.uid,
+                  time: msgTime,
+                  msgId: message.id,
+                  day: msgDay,
+                ));
+                // if(groupDate != msgDay){
+                //   groupDate = msgDay;
+                //   return Column(
+                //     children: [
+                //       Center(
+                //         child: Text(msgDay,style: const TextStyle(color: Colors.white),textAlign: TextAlign.center,),
+                //       ),
+                //       const SizedBox(height: 30,),
+                //     ],
+                //   );
+                // }
+              }
+              return Expanded(
+                child: ListView(
+                  reverse: true,
+                  children: messageWidgets,
+                ),
+              );
+            }else{
+              return Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:  [
+                    const Icon(Ionicons.server_outline,size:90,color: Colors.white12,),
+                    const SizedBox(height: 10,),
+                    Text("Wow so empty..\nStart texting",style: GoogleFonts.poppins(color: Colors.white12,fontSize: 18),textAlign: TextAlign.center,),
+                  ],
+                ),
+              );
             }
-            return Expanded(
-              child: ListView(
-                reverse: true,
-                children: messageWidgets,
-              ),
-            );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.amberAccent,
+            return const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
               ),
             );
           }
@@ -318,7 +246,8 @@ class MessageBubble extends StatefulWidget {
       required this.text,
       required this.isMe,
       required this.time,
-      required this.msgId})
+      required this.msgId, required this.day
+      })
       : super(key: key);
   final String senderUid;
   final String senderUserName;
@@ -326,13 +255,21 @@ class MessageBubble extends StatefulWidget {
   final bool isMe;
   final String time;
   final String msgId;
-
+  final String day;
   @override
   State<MessageBubble> createState() => _MessageBubbleState();
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
   bool isSelected = false;
+  deleteMsg(){
+    _fireStore
+        .collection("groups")
+        .doc(grpId)
+        .collection("messages")
+        .doc(widget.msgId)
+        .delete();
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -358,20 +295,12 @@ class _MessageBubbleState extends State<MessageBubble> {
         child: Row(
           mainAxisAlignment:
               widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (widget.isMe && isSelected) ...[
               Column(
                 children: [
                   TextButton(
-                      onPressed: () {
-                        _fireStore
-                            .collection("groups")
-                            .doc(grpId)
-                            .collection("messages")
-                            .doc(widget.msgId)
-                            .delete();
-                      },
+                      onPressed:deleteMsg,
                       child: const Icon(
                         Icons.delete,
                         size: 35,
@@ -384,8 +313,7 @@ class _MessageBubbleState extends State<MessageBubble> {
               )
             ],
             Column(
-              mainAxisAlignment:
-                  widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+              crossAxisAlignment: widget.isMe ?  CrossAxisAlignment.end:CrossAxisAlignment.start,
               children: [
                 Material(
                     borderRadius: widget.isMe
@@ -397,8 +325,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                             topRight: Radius.circular(10),
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10)),
-                    elevation: 5.0,
-                    color: HexColor("#3d3d3d"),
+                    color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.75),
@@ -429,7 +356,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                                 height: 5,
                               ),
                             ],
-                            Text(
+                            SelectableText(
                               widget.text,
                               style: GoogleFonts.poppins(
                                   fontSize: 17, color: Colors.white),
@@ -437,13 +364,22 @@ class _MessageBubbleState extends State<MessageBubble> {
                           ],
                         ),
                       ),
-                    )),
-                const SizedBox(
-                  height: 4,
+                    )
                 ),
-                Text(
-                  widget.time.substring(11),
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    if(!widget.isMe)
+                    const SizedBox(width: 5,),
+                    Text(
+                      widget.time.substring(11),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                    ),
+                    if(widget.isMe)
+                      const SizedBox(width: 5,)
+                  ],
                 ),
               ],
             ),

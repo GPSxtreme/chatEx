@@ -50,12 +50,9 @@ class _profileUserShowState extends State<profileUserShow> {
   }
 
   Future<void> onRefresh()async{
-    if(dataPassed["isMe"]){
      HelperFunctions.clearImageCache();
-    }else{
       setState(() {
       });
-    }
   }
   @override
   Widget build(BuildContext context) {
@@ -95,16 +92,6 @@ class _profileUserShowState extends State<profileUserShow> {
                   ))
 
             ],
-            // if(inEditMode) ...[
-            //   IconButton(
-            //       onPressed: () {
-            //
-            //       },
-            //       icon: const Icon(
-            //         Icons.check,
-            //         color: Colors.white,
-            //       ))
-            // ]
           ],
         ),
         backgroundColor: MainScreenTheme.mainScreenBg,
@@ -160,7 +147,7 @@ class _profileUserShowState extends State<profileUserShow> {
                                 CircleAvatar(
                                   radius: 90,
                                   backgroundColor: Colors.white,
-                                  backgroundImage: CachedNetworkImageProvider(dataFetched["profileImgLink"]),
+                                  backgroundImage: NetworkImage(dataFetched["profileImgLink"]),
                                 )
                                     : const CircleAvatar(
                                   radius: 90,
@@ -215,7 +202,7 @@ class _profileUserShowState extends State<profileUserShow> {
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.5,
                                 decoration: BoxDecoration(
-                                  color: HexColor("222222"),
+                                  color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black54,
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                                 child: Row(
@@ -251,7 +238,7 @@ class _profileUserShowState extends State<profileUserShow> {
                               endIndent:
                                   MediaQuery.of(context).size.width * 0.055,
                               height: 18,
-                              color: HexColor("222222"),
+                              color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black54,
                             ),
                             const SizedBox(
                               height: 25,
@@ -259,7 +246,7 @@ class _profileUserShowState extends State<profileUserShow> {
                             Container(
                               width: MediaQuery.of(context).size.width * 0.9,
                               decoration: BoxDecoration(
-                                  color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
+                                  color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black54,
                                   borderRadius:
                                       const BorderRadius.all(Radius.circular(8))),
                               child: Padding(

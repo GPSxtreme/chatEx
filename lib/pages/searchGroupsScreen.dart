@@ -130,8 +130,8 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height*0.25,),
-            Icon(Icons.not_interested_outlined,color: HexColor("222222"),size: 100,),
-            Text("No search results found",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),),
+            const Icon(Icons.not_interested_outlined,color: Colors.white12,size: 100,),
+            Text("No search results found",style: GoogleFonts.poppins(color: Colors.white12,fontSize: 20),),
           ],
         ),
       );
@@ -144,8 +144,8 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height*0.25,),
-            Icon(Icons.search,color: HexColor("222222"),size: 100,),
-            Text("Search for results",style: GoogleFonts.poppins(color: HexColor("222222"),fontSize: 20),)
+            const Icon(Icons.search,color: Colors.white12,size: 100,),
+            Text("Search for results",style: GoogleFonts.poppins(color: Colors.white12,fontSize: 20),)
           ],
         ),
       );

@@ -28,20 +28,20 @@ const kTextFieldInputDecoration = InputDecoration(
 );
 InputDecoration kMsgInputContainerDecoration = InputDecoration(
   filled: true,
-  fillColor: HexColor("2e2e2e"),
+  fillColor: HexColor("222222"),
   hintText: 'Type your message here...',
   hintStyle:
       GoogleFonts.poppins(color: Colors.white70, fontWeight: FontWeight.w400),
   border: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(28)),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
     borderSide: BorderSide(color: Colors.white30, width: 2.0),
   ),
   enabledBorder: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(28)),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
     borderSide: BorderSide(color: Colors.white30, width: 2.0),
   ),
   focusedBorder: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(28)),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
     borderSide: BorderSide(color: Colors.white30, width: 2.0),
   ),
 );
@@ -84,6 +84,7 @@ void showSnackBar(BuildContext buildContext, String txt, int duration,
     backgroundColor: hexCode != null ? HexColor(hexCode):bgNormalColor,
     shape: const OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderSide: BorderSide(color: Colors.transparent)
     ),
     duration: Duration(milliseconds: duration),
   ));
@@ -91,7 +92,7 @@ void showSnackBar(BuildContext buildContext, String txt, int duration,
 
 //alertBox
 Future showDialogBox(BuildContext context, title, String msg, Color titleColor,
-    void Function()? yes, void Function()? no) {
+    dynamic Function()? yes, dynamic Function()? no) {
   return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -190,14 +191,22 @@ class HelperFunctions {
     imageCache.clearLiveImages();
   }
   static void scrollDown(){
-    final ScrollController _controller = ScrollController();
+    final ScrollController controller = ScrollController();
     //animate scroll
-    _controller.animateTo(
-      _controller.position.maxScrollExtent,
+    controller.animateTo(
+      controller.position.maxScrollExtent,
       duration: const Duration(seconds: 2),
       curve: Curves.fastOutSlowIn,
     );
     //no animate scroll
-    _controller.jumpTo(_controller.position.maxScrollExtent);
+    controller.jumpTo(controller.position.maxScrollExtent);
+  }
+  static popOutOfContext(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+  static popOfPage(BuildContext context){
+    final nav = Navigator.of(context);
+    nav.pop();
+    nav.pop();
   }
 }

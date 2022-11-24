@@ -2,6 +2,7 @@ import 'package:chat_room/services/cloudStorageService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseService{
   static Future<String> addNewGroup(String name,String createdBy,String uid)async{
@@ -71,15 +72,53 @@ class DatabaseService{
     });
   }
   static Future deleteGroup(String groupId,String groupIconPath)async{
-    final _fireStore = FirebaseFirestore.instance;
-    final groupDetails = await _fireStore.collection("groups").doc(groupId).get();
+    try{
+      final _fireStore = FirebaseFirestore.instance;
+      final groupDetails = await _fireStore.collection("groups").doc(groupId).get();
       for(var member in groupDetails["members"]){
         String memberUid = member.toString().split("_")[0];
         await _fireStore.collection("users").doc(memberUid).update({
           "joinedGroups": FieldValue.arrayRemove([groupId])
         });
       }
-    await CloudStorageService.removeCloudStorageFile(groupIconPath);
-    await _fireStore.collection("groups").doc(groupId).delete();
+      await CloudStorageService.removeCloudStorageFile(groupIconPath);
+      await _fireStore.collection("groups").doc(groupId).delete();
+    }catch(e){
+      print("delete group error: $e");
+    }
   }
+  static Future leaveGroup(String groupId) async {
+    try{
+      final _fireStore = FirebaseFirestore.instance;
+      final _auth = FirebaseAuth.instance;
+      await _fireStore.collection("users").doc(_auth.currentUser?.uid).update({
+        "joinedGroups": FieldValue.arrayRemove([groupId])
+      });
+      //pop of page after
+    }catch(e){
+      print("leave group error: $e");
+    }
+  }
+  static Future superDeleteGroup(String groupId,String groupName)async{
+    await leaveGroup(groupId);
+    await deleteGroup(groupId,"groupProfilePictures/${groupId}_$groupName.jpg");
+  }
+  static Future superUserDelAllMsg(BuildContext context,String groupId) async {
+    final _fireStore = FirebaseFirestore.instance;
+    final messages = await _fireStore
+        .collection("groups")
+        .doc(groupId)
+        .collection("messages")
+        .get();
+    final docs = messages.docs;
+    for (var doc in docs) {
+      _fireStore
+          .collection("groups")
+          .doc(groupId)
+          .collection("messages")
+          .doc(doc.id)
+          .delete();
+    }
+  }
+
 }

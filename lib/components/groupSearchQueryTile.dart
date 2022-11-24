@@ -45,7 +45,7 @@ class _GroupSearchQueryTileState extends State<GroupSearchQueryTile> {
         child: GestureDetector(
           onTap: (){
             if(isJoined){
-              Navigator.pushNamed(context, chatScreen.id,arguments: {"groupId":widget.groupId,"groupName":name,"createdBy":by});
+              // Navigator.pushNamed(context, chatScreen.id,arguments: {"groupId":widget.groupId,"groupName":name,"createdBy":by});
             }else{
               showSnackBar(context, "Join $name to enter chat.", 1100,bgColor: Colors.indigo);
             }
