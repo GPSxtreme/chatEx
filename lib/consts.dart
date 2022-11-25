@@ -36,6 +36,14 @@ InputDecoration kMsgInputContainerDecoration = InputDecoration(
     borderRadius: const BorderRadius.all(Radius.circular(8)),
     borderSide: BorderSide(color: HexColor("111111"), width: 0)
   ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: const BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(color: HexColor("111111"), width: 0)
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: const BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(color: HexColor("111111"), width: 0),
+  ),
 );
 
 InputDecoration kSearchGroupInputDecoration = InputDecoration(
