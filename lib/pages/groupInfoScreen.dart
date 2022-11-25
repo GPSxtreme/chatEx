@@ -177,7 +177,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                                     onPressed: () {
                                       showDialogBox(
                                           context,
-                                          'Leave Group?',
+                                          'LEAVE GROUP?',
                                           "You can join the group again.",
                                           Colors.red,
                                           leaveGroup,

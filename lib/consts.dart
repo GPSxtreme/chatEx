@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -98,7 +99,7 @@ Future showDialogBox(BuildContext context, title, String msg, Color titleColor,
       builder: (BuildContext context) {
         return AlertDialog(
           elevation: 5,
-          backgroundColor: HexColor("#222222"),
+          backgroundColor: MainScreenTheme.mainScreenBg,
           title: Text(
             title,
             style: TextStyle(
