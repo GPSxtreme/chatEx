@@ -372,12 +372,12 @@ class _MessageBubbleState extends State<MessageBubble> {
                         color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
                         child: Container(
                           constraints: BoxConstraints(
-                              minWidth:MediaQuery.of(context).size.width * 0.30,
+                              minWidth:MediaQuery.of(context).size.width * 0.20,
                               maxWidth: MediaQuery.of(context).size.width * 0.75
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12.0, horizontal: 15.0),
+                                vertical: 15.0, horizontal: 15.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -394,7 +394,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                                       child: Text(
                                         widget.senderUserName,
                                         style: GoogleFonts.poppins(
-                                            color: Colors.amber,
+                                            color: Colors.blue,
                                             fontSize: 17,
                                             decoration: TextDecoration.underline),
                                       )),
