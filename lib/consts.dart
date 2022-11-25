@@ -28,21 +28,13 @@ const kTextFieldInputDecoration = InputDecoration(
 );
 InputDecoration kMsgInputContainerDecoration = InputDecoration(
   filled: true,
-  fillColor: HexColor("222222"),
+  fillColor: HexColor("111111"),
   hintText: 'Type your message here...',
   hintStyle:
       GoogleFonts.poppins(color: Colors.white70, fontWeight: FontWeight.w400),
-  border: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12)),
-    borderSide: BorderSide(color: Colors.white30, width: 2.0),
-  ),
-  enabledBorder: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12)),
-    borderSide: BorderSide(color: Colors.white30, width: 2.0),
-  ),
-  focusedBorder: const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12)),
-    borderSide: BorderSide(color: Colors.white30, width: 2.0),
+  border: OutlineInputBorder(
+    borderRadius: const BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(color: HexColor("111111"), width: 0)
   ),
 );
 
@@ -208,5 +200,13 @@ class HelperFunctions {
     final nav = Navigator.of(context);
     nav.pop();
     nav.pop();
+  }
+  static Widget tradeMark(){
+    return Column(
+      children: [
+        Text("By\nGPSxtreme",style: GoogleFonts.mansalva(color: Colors.white54),textAlign: TextAlign.center,),
+        const SizedBox(height: 10,)
+      ],
+    );
   }
 }

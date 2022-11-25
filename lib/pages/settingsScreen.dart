@@ -49,118 +49,135 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         backgroundColor: SettingsScreenTheme.settingsScreenAppBarBg,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Column(
           children: [
-            const SizedBox(height: 10,),
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.95,
-                decoration: BoxDecoration(
-                  color: Colors.white12,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 25),
-                  child: Column(children: [
-                    Text(
-                      "App Theme",
-                      style: GoogleFonts.poppins(
-                          color: SettingsScreenTheme.settingsScreenText,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.left,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Divider(
-                      color: Colors.white10,
-                      indent: 20,
-                      endIndent: 20,
-                      height: 2,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Expanded(
+              child: ScrollConfiguration(
+                behavior: const ScrollBehavior(),
+                child: GlowingOverscrollIndicator(
+                  axisDirection: AxisDirection.down,
+                  color: MainScreenTheme.mainScreenBg,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      Column(
+                        children: [
+                          const SizedBox(height: 10,),
+                          Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              decoration: BoxDecoration(
+                                color: Colors.white12,
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 5, vertical: 25),
+                                child: Column(children: [
+                                  Text(
+                                    "App Theme",
+                                    style: GoogleFonts.poppins(
+                                        color: SettingsScreenTheme.settingsScreenText,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Divider(
+                                    color: Colors.white12,
+                                    indent: 20,
+                                    endIndent: 20,
+                                    height: 2,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
-                      children: const [
-                        ThemeTile(
-                          tileColorHexCode: "501b23",
-                        ),
-                        ThemeTile(
-                          tileColorHexCode: "961e7c",
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: const [
-                        ThemeTile(
-                          tileColorHexCode: "4B0082",
-                        ),
-                        ThemeTile(
-                          tileColorHexCode: "3c341f",
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async{
-                            await LocalDataService.setUserTheme(SettingsScreen.selectedThemeColor);
-                            ThemeDataService.setAppTheme(SettingsScreen.selectedThemeColor);
-                            showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,hexCode: SettingsScreen.selectedThemeColor);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    children: const [
+                                      ThemeTile(
+                                        tileColorHexCode: "501b23",
+                                      ),
+                                      ThemeTile(
+                                        tileColorHexCode: "961e7c",
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: const [
+                                      ThemeTile(
+                                        tileColorHexCode: "4B0082",
+                                      ),
+                                      ThemeTile(
+                                        tileColorHexCode: "3c341f",
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () async{
+                                          await LocalDataService.setUserTheme(SettingsScreen.selectedThemeColor);
+                                          ThemeDataService.setAppTheme(SettingsScreen.selectedThemeColor);
+                                          showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,hexCode: SettingsScreen.selectedThemeColor);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.black,
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        ),
+                                        child:Text(
+                                          "Apply",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 15,),
+                                      ElevatedButton(
+                                        onPressed: () async{
+                                          await LocalDataService.setUserTheme("");
+                                          SettingsScreen.isAThemeTileActive = false;
+                                          ThemeDataService.resetToDark();
+                                          showSnackBar(context, "Default theme set.\nRestart app to show changes", 2000,bgColor:Colors.black);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.black,
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        ),
+                                        child:Text(
+                                          "Reset",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                              ),
+                            ),
                           ),
-                          child:Text(
-                            "Apply",
-                            style: GoogleFonts.poppins(
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(width: 15,),
-                        ElevatedButton(
-                          onPressed: () async{
-                            await LocalDataService.setUserTheme("");
-                            SettingsScreen.isAThemeTileActive = false;
-                            ThemeDataService.resetToDark();
-                            showSnackBar(context, "Default theme set.\nRestart app to show changes", 2000,bgColor:Colors.black);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          ),
-                          child:Text(
-                            "Reset",
-                            style: GoogleFonts.poppins(
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    )
-                  ]),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
+            ),
+            HelperFunctions.tradeMark(),
           ],
         ),
-      ),
     );
   }
 }

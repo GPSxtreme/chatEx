@@ -102,8 +102,7 @@ class _chatScreenState extends State<chatScreen> {
                   ),
                   Center(
                     child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        height: 60,
+                        margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 7),
                         child: buildTextField(context)
                     ),
                   )
@@ -124,11 +123,13 @@ class _chatScreenState extends State<chatScreen> {
       ),
       cursorColor: Colors.white,
       decoration: kMsgInputContainerDecoration.copyWith(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
           suffixIcon: IconButton(
               onPressed: () {
                 if (msgTxt.isNotEmpty) {
                   final dateTime = DateTime.now();
-                  String formatter = DateFormat.yMd().add_jm().format(dateTime);
+                  String sentTime = DateFormat('h:mm a').format(dateTime);
+                  String sentDay = DateFormat('EEEE, d MMM, yyyy').format(dateTime);
                   final sortTime = Timestamp.now();
                   msgTextController.clear();
                   _fireStore
@@ -140,7 +141,8 @@ class _chatScreenState extends State<chatScreen> {
                     'senderUid': loggedUser.uid,
                     'senderEmail': loggedUser.email,
                     'senderUserName': userDetails['userName'],
-                    'createdAt': formatter,
+                    'sentTime': sentTime,
+                    'sentDay': sentDay,
                     'timeSort': sortTime
                   });
                   msgTxt = "";
@@ -162,9 +164,32 @@ class _chatScreenState extends State<chatScreen> {
 }
 
 //message fetching service
-class MessageStream extends StatelessWidget {
-  static String groupDate = "";
+class MessageStream extends StatefulWidget {
   const MessageStream({Key? key}) : super(key: key);
+  static String groupDate = "";
+  @override
+  State<MessageStream> createState() => _MessageStreamState();
+}
+
+class _MessageStreamState extends State<MessageStream> {
+  static ScrollController controller = ScrollController();
+  static void scrollDown(){
+    //animate scroll
+    controller.animateTo(
+      controller.position.maxScrollExtent,
+      duration: const Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
+    //no animate scroll
+    // controller.jumpTo(controller.position.maxScrollExtent);
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // scrollDown();
+    MessageStream.groupDate = "";
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -176,40 +201,43 @@ class MessageStream extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final messages = snapshot.data?.docs.reversed;
+            final messages = snapshot.data?.docs;
             if(messages!.isNotEmpty){
               List<MessageBubble> messageWidgets = [];
               for (var message in messages) {
                 final msgSenderUid = message.get('senderUid');
                 final msgSenderUserName = message.get('senderUserName');
                 final msgTxt = message.get('text');
-                final msgTime = message.get('createdAt');
-                final msgDay = msgTime.toString().split(" ")[0];
+                final msgTime = message.get('sentTime');
+                final msgDay = message.get("sentDay");
+                bool show = false;
+                if(MessageStream.groupDate != msgDay){
+                  MessageStream.groupDate = msgDay;
+                  show = true;
+                }
                 messageWidgets.add(MessageBubble(
-                  senderUid: msgSenderUid,
-                  senderUserName: msgSenderUserName,
-                  text: msgTxt,
-                  isMe: msgSenderUid == loggedUser.uid,
-                  time: msgTime,
-                  msgId: message.id,
-                  day: msgDay,
+                    senderUid: msgSenderUid,
+                    senderUserName: msgSenderUserName,
+                    text: msgTxt,
+                    isMe: msgSenderUid == loggedUser.uid,
+                    time: msgTime,
+                    msgId: message.id,
+                    day: msgDay,
+                    show:show
                 ));
-                // if(groupDate != msgDay){
-                //   groupDate = msgDay;
-                //   return Column(
-                //     children: [
-                //       Center(
-                //         child: Text(msgDay,style: const TextStyle(color: Colors.white),textAlign: TextAlign.center,),
-                //       ),
-                //       const SizedBox(height: 30,),
-                //     ],
-                //   );
-                // }
               }
               return Expanded(
-                child: ListView(
-                  reverse: true,
-                  children: messageWidgets,
+                child: ScrollConfiguration(
+                  behavior: const ScrollBehavior(),
+                  child: GlowingOverscrollIndicator(
+                    axisDirection: AxisDirection.down,
+                    color: MainScreenTheme.mainScreenBg,
+                    child: ListView(
+                      controller: controller,
+                      reverse: false,
+                      children: messageWidgets,
+                    ),
+                  ),
                 ),
               );
             }else{
@@ -238,6 +266,7 @@ class MessageStream extends StatelessWidget {
   }
 }
 
+
 class MessageBubble extends StatefulWidget {
   const MessageBubble(
       {Key? key,
@@ -246,7 +275,7 @@ class MessageBubble extends StatefulWidget {
       required this.text,
       required this.isMe,
       required this.time,
-      required this.msgId, required this.day
+      required this.msgId, required this.day, required this.show
       })
       : super(key: key);
   final String senderUid;
@@ -256,6 +285,7 @@ class MessageBubble extends StatefulWidget {
   final String time;
   final String msgId;
   final String day;
+  final bool show;
   @override
   State<MessageBubble> createState() => _MessageBubbleState();
 }
@@ -287,104 +317,124 @@ class _MessageBubbleState extends State<MessageBubble> {
           });
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.transparent,
-        ),
-        child: Row(
-          mainAxisAlignment:
-              widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            if (widget.isMe && isSelected) ...[
-              Column(
-                children: [
-                  TextButton(
-                      onPressed:deleteMsg,
-                      child: const Icon(
-                        Icons.delete,
-                        size: 35,
-                        color: Colors.black54,
-                      )),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                ],
-              )
-            ],
+      child: Column(
+        children: [
+          if(widget.show)
             Column(
-              crossAxisAlignment: widget.isMe ?  CrossAxisAlignment.end:CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20,),
+              Center(
+                child: Text("${widget.day.split(',')[0]}\n${widget.day.split(',')[1]}${widget.day.split(',')[2]}",style: GoogleFonts.poppins(color: Colors.white),textAlign: TextAlign.center,),
+              ),
+              const SizedBox(height: 10,),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.red : Colors.transparent,
+            ),
+            child: Row(
+              mainAxisAlignment:
+                  widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                Material(
-                    borderRadius: widget.isMe
-                        ? const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10))
-                        : const BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10)),
-                    color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
-                    child: Container(
-                      constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.75),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 9.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (!widget.isMe) ...[
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, profileUserShow.id,
-                                        arguments: {
-                                          "senderUid": widget.senderUid,
-                                          "isMe": false
-                                        });
-                                  },
-                                  child: Text(
-                                    widget.senderUserName,
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.amber,
-                                        fontSize: 17,
-                                        decoration: TextDecoration.underline),
-                                  )),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                            ],
-                            SelectableText(
-                              widget.text,
-                              style: GoogleFonts.poppins(
-                                  fontSize: 17, color: Colors.white),
-                            ),
-                          ],
-                        ),
+                if (widget.isMe && isSelected) ...[
+                  Column(
+                    children: [
+                      TextButton(
+                          onPressed:deleteMsg,
+                          child: const Icon(
+                            Icons.delete,
+                            size: 35,
+                            color: Colors.black54,
+                          )),
+                      const SizedBox(
+                        height: 15,
                       ),
-                    )
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
+                    ],
+                  )
+                ],
+                if(!widget.isMe)
+                const SizedBox(width: 7,),
+                Column(
+                  crossAxisAlignment: widget.isMe ?  CrossAxisAlignment.end:CrossAxisAlignment.start,
                   children: [
-                    if(!widget.isMe)
-                    const SizedBox(width: 5,),
-                    Text(
-                      widget.time.substring(11),
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                    Material(
+                        borderRadius: widget.isMe
+                            ? const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10))
+                            : const BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                        color: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.black26,
+                        child: Container(
+                          constraints: BoxConstraints(
+                              minWidth:MediaQuery.of(context).size.width * 0.30,
+                              maxWidth: MediaQuery.of(context).size.width * 0.75
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0, horizontal: 15.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (!widget.isMe) ...[
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushReplacementNamed(
+                                            context, profileUserShow.id,
+                                            arguments: {
+                                              "senderUid": widget.senderUid,
+                                              "isMe": false
+                                            });
+                                      },
+                                      child: Text(
+                                        widget.senderUserName,
+                                        style: GoogleFonts.poppins(
+                                            color: Colors.amber,
+                                            fontSize: 17,
+                                            decoration: TextDecoration.underline),
+                                      )),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                ],
+                                SelectableText(
+                                  widget.text,
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 17, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                     ),
-                    if(widget.isMe)
-                      const SizedBox(width: 5,)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        if(!widget.isMe)
+                        const SizedBox(width: 5,),
+                        Text(
+                          widget.time,
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                        if(widget.isMe)
+                          const SizedBox(width: 15,)
+                      ],
+                    ),
                   ],
                 ),
+                if(widget.isMe)
+                  const SizedBox(width: 17,),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

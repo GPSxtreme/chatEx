@@ -261,7 +261,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
               ),
               const Expanded(child: SizedBox()),
               const Divider(
-                color: Colors.white24,
+                color: Colors.white12,
                 indent: 20,
                 endIndent: 20,
                 height: 2,

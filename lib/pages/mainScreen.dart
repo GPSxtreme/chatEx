@@ -82,31 +82,40 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   groupList() {
-    return StreamBuilder(
-        stream: _fireStore.collection("users").doc(loggedUser.uid).snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data['joinedGroups'] != null &&
-                snapshot.data['joinedGroups'].length != 0) {
-              return ListView.builder(
-                reverse: false,
-                itemCount: snapshot.data['joinedGroups'].length,
-                itemBuilder: (context, index) {
-                  return GroupTile(
-                      groupId: snapshot.data["joinedGroups"][index]);
-                },
-              );
-            } else {
-              return noGroupWidget();
-            }
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
+    return Column(
+      children: [
+        Expanded(
+          child: StreamBuilder(
+              stream: _fireStore.collection("users").doc(loggedUser.uid).snapshots(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data['joinedGroups'] != null &&
+                      snapshot.data['joinedGroups'].length != 0) {
+                    return ListView.builder(
+                      shrinkWrap: false,
+                      reverse: false,
+                      itemCount: snapshot.data['joinedGroups'].length,
+                      itemBuilder: (context, index) {
+                        return GroupTile(
+                            groupId: snapshot.data["joinedGroups"][index]);
+                      },
+                    );
+                  } else {
+                    return noGroupWidget();
+                  }
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  );
+                }
+              }
               ),
-            );
-          }
-        });
+        ),
+        HelperFunctions.tradeMark()
+      ],
+    );
   }
 
   noGroupWidget() {
@@ -184,8 +193,17 @@ class _MainScreenState extends State<MainScreen> {
             imageUrl: data["img"],
             userName: data["name"],
             userUid: loggedUser.uid),
-        body: RefreshIndicator(child: groupList(), onRefresh: onRefresh,color: MainScreenTheme.mainScreenBg,),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          color: MainScreenTheme.mainScreenBg,
+          child: Stack(
+            children: [
+              groupList()
+            ],
+          ),
+        ),
       ),
     );
   }
 }
+
