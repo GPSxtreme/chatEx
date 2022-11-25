@@ -22,7 +22,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
   String groupId = "";
   String imgPath = "";
   String groupName = "";
-
+  bool isAdmin = false;
   memberList(){
     return StreamBuilder(
         stream:_fireStore.collection("groups").doc(groupId).snapshots(),
@@ -53,6 +53,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
       groupId = dataPassed["groupId"];
       imgPath = dataPassed["groupImgPath"];
       groupName = dataPassed["groupName"];
+      isAdmin = dataPassed["isAdmin"] ? true:false;
       //page functions
     popOfPage(){
       HelperFunctions.popOfPage(context);
@@ -139,7 +140,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (dataPassed["isAdmin"]) ...[
+                                if (isAdmin) ...[
                                   TextButton(
                                       onPressed: () {
                                         showDialogBox(

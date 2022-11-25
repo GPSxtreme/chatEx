@@ -1,4 +1,5 @@
 import 'package:chat_room/consts.dart';
+import 'package:chat_room/services/authService.dart';
 import 'package:chat_room/services/localDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -104,14 +105,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       ThemeTile(
                                         tileColorHexCode: "961e7c",
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: const [
                                       ThemeTile(
                                         tileColorHexCode: "4B0082",
                                       ),
@@ -121,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 30,
+                                    height: 20,
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -133,13 +126,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,hexCode: SettingsScreen.selectedThemeColor);
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.black,
+                                          backgroundColor: MainScreenTheme.mainScreenBg,
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                         ),
                                         child:Text(
                                           "Apply",
                                           style: GoogleFonts.poppins(
-                                              fontSize: 20,
+                                              fontSize: 15,
                                               color: Colors.white),
                                         ),
                                       ),
@@ -152,13 +145,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           showSnackBar(context, "Default theme set.\nRestart app to show changes", 2000,bgColor:Colors.black);
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.black,
+                                          backgroundColor: MainScreenTheme.mainScreenBg,
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                         ),
                                         child:Text(
                                           "Reset",
                                           style: GoogleFonts.poppins(
-                                              fontSize: 20,
+                                              fontSize: 15,
                                               color: Colors.white),
                                         ),
                                       ),
@@ -168,6 +161,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10,),
+                          ListTile(
+                            leading: const Icon(Icons.password,color: Colors.white,size: 30,),
+                            title: Text("Change password",style: GoogleFonts.poppins(color: Colors.white),),
+                            onTap: ()async{
+                              await AuthService.changeUserPassword();
+                              showSnackBar(context, "Password reset email sent\nPlease check spam folder of your email.", 1800,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo );
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.email,color: Colors.white,size: 30,),
+                            title: Text("Change email",style: GoogleFonts.poppins(color: Colors.white),),
+                            onTap: ()async{
+                              String newEmail = "prudhvisuraaj@gmail.com";
+                              await AuthService.changeUserEmail(context , newEmail);
+                            },
+                          )
                         ],
                       ),
                     ],
@@ -226,20 +236,20 @@ class _ThemeTileState extends State<ThemeTile> {
     return GestureDetector(
       onTap: onTap,
       child: DropShadow(
-        blurRadius: 2,
-        offset: const Offset(2,2),
+        blurRadius: 1,
+        offset: const Offset(1,1),
         opacity: 1,
         spread: 1,
         child: Container(
-          width: 100,
-          height: 100,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
               color: HexColor(widget.tileColorHexCode),
               borderRadius: BorderRadius.circular(100),
               border:
                   isSelected ? Border.all(color: Colors.blue, width: 3) : null),
           child: Center(
-            child: isSelected? Icon(Icons.check,color: Colors.black.withAlpha(87),size: 60,):null,
+            child: isSelected? Icon(Icons.check,color: Colors.black.withAlpha(87),size: 30,):null,
           ),
         ),
       ),
