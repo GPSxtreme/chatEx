@@ -177,11 +177,13 @@ class _MainScreenState extends State<MainScreen> {
                 onPressed: () {
                   onRefresh();
                 },
+                tooltip: "Refresh",
                 icon: Icon(
                   Icons.refresh,
                   color: MainScreenTheme.mainScreenAppBarSearchIcon,
                 )),
             IconButton(
+                tooltip: "Search groups",
                 onPressed: () {
                   Navigator.pushNamed(context, SearchGroupsScreen.id);
                 },

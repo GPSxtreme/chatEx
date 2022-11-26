@@ -1,25 +1,31 @@
+import 'package:chat_room/consts.dart';
+import 'package:chat_room/pages/groupInfoScreen.dart';
 import 'package:chat_room/pages/profileUserShow.dart';
+import 'package:chat_room/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class GroupUserTile extends StatefulWidget {
-  const GroupUserTile({Key? key, required this.userId}) : super(key: key);
+  const GroupUserTile({Key? key, required this.userId, required this.groupId}) : super(key: key);
   final String userId;
+  final String groupId;
   @override
   State<GroupUserTile> createState() => _GroupUserTileState();
 }
 
 class _GroupUserTileState extends State<GroupUserTile> {
+  String userUid = "";
   String userName = "";
   String userImgUrl = "";
   String userImgPath = "";
   final _fireStore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
+    userUid = widget.userId.split("_")[0];
     return StreamBuilder(
-        stream: _fireStore.collection("users").doc(widget.userId).snapshots(),
+        stream: _fireStore.collection("users").doc(userUid).snapshots(),
         builder: (context,AsyncSnapshot snapshot){
           String userNameFetched = "";
           String userImgUrlFetched = "";
@@ -32,7 +38,7 @@ class _GroupUserTileState extends State<GroupUserTile> {
                 Navigator.pushReplacementNamed(
                     context, profileUserShow.id,
                     arguments: {
-                      "senderUid": widget.userId,
+                      "senderUid": userUid,
                       "isMe": false
                     });
               },
@@ -60,11 +66,12 @@ class _GroupUserTileState extends State<GroupUserTile> {
                         fontSize: 18,
                         fontWeight: FontWeight.w500),
                   ),
-                  //Intended for personal chats.I don't have that much time 🥲
-                  // trailing: IconButton(
-                  //   onPressed: (){},
-                  //   icon: const Icon(Icons.message,color: Colors.white,),
-                  // ),
+                  trailing: GroupInfoScreen.isInEditMode ? IconButton(
+                    onPressed: ()async{
+                      await DatabaseService.kickGroupUser(widget.groupId,widget.userId);
+                    },
+                    icon: const Icon(Icons.remove_circle_outline,color: Colors.red,),
+                  ):null,
                 ),
             );
           }else{

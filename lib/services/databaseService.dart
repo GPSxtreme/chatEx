@@ -13,6 +13,7 @@ class DatabaseService{
     await _fireStore.collection("groups").add({
       "groupId":"",
       "groupIcon":"",
+      "about":"",
       "createdBy":createdBy,
       "name":name,
       "createdDate":date,
@@ -122,9 +123,11 @@ class DatabaseService{
   }
   static Future kickGroupUser(String groupId,String userId)async{
     final _fireStore = FirebaseFirestore.instance;
-
-    await _fireStore.collection("users").doc(userId).update({
-        "joinedGroups": FieldValue.arrayRemove([groupId])
-      });
+    await _fireStore.collection("users").doc(userId.split("_")[0]).update({
+      "joinedGroups": FieldValue.arrayRemove([groupId])
+    });
+    await _fireStore.collection("groups").doc(groupId).update({
+      "members":FieldValue.arrayRemove([userId])
+    });
   }
 }

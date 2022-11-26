@@ -67,7 +67,7 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):MainScreenTheme.mainScreenBg,
+      backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("111111"):MainScreenTheme.mainScreenBg,
       title: Text(
         title,
         textAlign: TextAlign.center,
@@ -97,6 +97,8 @@ class _GroupCreatePopUpState extends State<GroupCreatePopUp> {
                   },
                   style: GoogleFonts.poppins(color: Colors.white),
                   decoration: InputDecoration(
+                    hintText: "group name",
+                      hintStyle: GoogleFonts.poppins(color: Colors.white12),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white),
                         borderRadius: BorderRadius.circular(6),

@@ -18,6 +18,7 @@ late String grpId;
 class chatScreen extends StatefulWidget {
   chatScreen({Key? key}) : super(key: key);
   static String id = 'chat_screen';
+  static bool isAdmin = false;
   @override
   State<chatScreen> createState() => _chatScreenState();
 }
@@ -30,7 +31,6 @@ class _chatScreenState extends State<chatScreen> {
   dynamic userDetails = {};
   bool _isLoading = true;
   bool showLoader = false;
-  bool isAdmin = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -61,7 +61,7 @@ class _chatScreenState extends State<chatScreen> {
         : ModalRoute.of(context)?.settings.arguments as Map;
     grpId = data['groupId'];
     if(userDetails["userName"] == data["createdBy"]){
-      isAdmin = true;
+      chatScreen.isAdmin = true;
     }
     return _isLoading
         ? ModalProgressHUD(
@@ -81,11 +81,12 @@ class _chatScreenState extends State<chatScreen> {
                 backgroundColor: Colors.black12,
                 elevation: 0,
                 actions: [
-                  TextButton(
+                  IconButton(
+                    tooltip: "Group info",
                     onPressed: () {
-                      Navigator.pushNamed(context, GroupInfoScreen.id,arguments:{"groupId":data["groupId"],"groupImgPath":data["groupImgPath"],"groupName":data["groupName"],"isAdmin":isAdmin} );
+                      Navigator.pushNamed(context, GroupInfoScreen.id,arguments:{"groupId":data["groupId"],"groupImgPath":data["groupImgPath"],"groupName":data["groupName"],"isAdmin":chatScreen.isAdmin} );
                     },
-                    child: const Icon(
+                    icon: const Icon(
                       Icons.info_outline,
                       color: Colors.white,
                       size: 25,
@@ -304,7 +305,7 @@ class _MessageBubbleState extends State<MessageBubble> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
-        if (widget.isMe) {
+        if (widget.isMe || chatScreen.isAdmin) {
           setState(() {
             isSelected = true;
           });
@@ -431,6 +432,22 @@ class _MessageBubbleState extends State<MessageBubble> {
                 ),
                 if(widget.isMe)
                   const SizedBox(width: 17,),
+                if (chatScreen.isAdmin && isSelected && !widget.isMe) ...[
+                  Column(
+                    children: [
+                      TextButton(
+                          onPressed:deleteMsg,
+                          child: const Icon(
+                            Icons.delete,
+                            size: 35,
+                            color: Colors.black54,
+                          )),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  )
+                ],
               ],
             ),
           ),

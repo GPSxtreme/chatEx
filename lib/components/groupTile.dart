@@ -80,6 +80,12 @@ class _GroupTileState extends State<GroupTile> {
           return null;
         }
         if(snapshot.hasData){
+          String groupName = "";
+          try{
+              groupName = snapshot.data["newName"];
+          }catch(e){
+            groupName = snapshot.data["name"];
+          }
           return Container(
               color: Colors.transparent,
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -87,7 +93,7 @@ class _GroupTileState extends State<GroupTile> {
                 onTap: () {
                   Navigator.pushNamed(context, chatScreen.id, arguments: {
                     "groupId": widget.groupId,
-                    "groupName": snapshot.data["name"],
+                    "groupName": groupName,
                     "createdBy": snapshot.data["createdBy"],
                     "groupImgPath":groupImgPath
                   });
@@ -109,7 +115,7 @@ class _GroupTileState extends State<GroupTile> {
                     ),
                   ),
                   title: Text(
-                    snapshot.data["name"],
+                    groupName,
                     style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontSize: 20,
