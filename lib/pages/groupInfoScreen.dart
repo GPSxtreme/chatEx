@@ -23,6 +23,8 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
   String imgPath = "";
   String groupName = "";
   bool isAdmin = false;
+  bool isInEditMode = false;
+  String newGroupName = "";
   memberList(){
     return StreamBuilder(
         stream:_fireStore.collection("groups").doc(groupId).snapshots(),
@@ -92,6 +94,30 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         title: Text("About",style: GoogleFonts.poppins(),),
         backgroundColor: MainScreenTheme.mainScreenAppBarBg,
         elevation: 0,
+        actions: !isAdmin ? null: [
+          if(!isInEditMode)
+          IconButton(
+              onPressed: (){
+            setState(() {
+              isInEditMode = true;
+            });
+          }, icon: const Icon(Icons.edit,color: Colors.white,)
+          ),
+          if(isInEditMode) ...[
+            IconButton(
+                onPressed: (){
+                  setState(() {
+                    isInEditMode = false;
+                  });
+                }, icon: const Icon(Icons.undo,color: Colors.white,)
+            ),
+            IconButton(
+                onPressed: (){
+                  //update settings
+                }, icon: const Icon(Icons.check,color: Colors.white,)
+            ),
+          ]
+        ],
       ),
       backgroundColor: MainScreenTheme.mainScreenBg,
       body: RefreshIndicator(
@@ -125,8 +151,52 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                               child: Column(
                                 children: [
                                   const SizedBox(height: 10,),
+                                  if(!isInEditMode)
                                   Text(groupName,style: GoogleFonts.poppins(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
+                                  if(isInEditMode)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 7),
+                                      child: TextFormField(
+                                        cursorColor: Colors.white,
+                                        initialValue: groupName,
+                                        // controller: userNameController,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        keyboardType:
+                                        TextInputType.emailAddress,
+                                        onChanged: (value) {
+                                          newGroupName = value;
+                                        },
+                                        decoration:
+                                        kMsgInputContainerDecoration.copyWith(
+                                            fillColor: Colors.white12,
+                                            prefixIcon: const Icon(
+                                              Icons.edit,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                            suffixIcon: IconButton(onPressed: ()async{
+                                              if(newGroupName.isEmpty){
+                                                newGroupName = groupName;
+                                              }
+                                              setState(() {
+                                                groupName = newGroupName;
+                                              });
+                                              await DatabaseService.updateGroupDetails(groupId,"newName",groupName);
+                                              setState(() {
+                                                isInEditMode = false;
+                                              });
+                                            }, icon: const Icon(Icons.check,color: Colors.white,size: 30,))
+                                        ),
+                                      ),
+                                    ),
                                   const SizedBox(height: 20,),
+                                  if(!isInEditMode)
                                   Text("Add group about to display here",maxLines: 3,style: GoogleFonts.poppins(fontWeight: FontWeight.w400,color: Colors.white),textAlign: TextAlign.center,overflow: TextOverflow.ellipsis,),
                                   const SizedBox(height: 20,),
                                 ],
@@ -180,13 +250,17 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                                     ],
                                     TextButton(
                                         onPressed: () {
-                                          showDialogBox(
-                                              context,
-                                              'LEAVE GROUP?',
-                                              "You can join the group again.",
-                                              Colors.red,
-                                              leaveGroup,
-                                              popOutOfContext);
+                                          if(!isAdmin){
+                                            showDialogBox(
+                                                context,
+                                                'LEAVE GROUP?',
+                                                "You can join the group again.",
+                                                Colors.red,
+                                                leaveGroup,
+                                                popOutOfContext);
+                                          }else{
+                                            showSnackBar(context, "Group creator cannot leave group without deleting it.", 3000,bgColor: Colors.indigo);
+                                          }
                                         },
                                         child: const Icon(
                                           Ionicons.log_out_outline,

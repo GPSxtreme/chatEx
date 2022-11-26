@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:chat_room/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:chat_room/pages/registrationScreen.dart';
@@ -25,7 +26,8 @@ class _welcomeScreenState extends State<welcomeScreen> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-            Row(
+              Expanded(child: Container()),
+              Row(
               children: [
                 SizedBox(width: size.width*0.09,),
                 const Icon(
@@ -67,6 +69,8 @@ class _welcomeScreenState extends State<welcomeScreen> {
                   },),
                 ],
               ),
+              Expanded(child: Container()),
+              HelperFunctions.tradeMark()
             ],
           )
       ),

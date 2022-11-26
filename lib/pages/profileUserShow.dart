@@ -63,6 +63,7 @@ class _profileUserShowState extends State<profileUserShow> {
       inAsyncCall: isLoading,
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           title: Text(
             dataPassed["isMe"] ? "My profile" : "User Profile",
             style: GoogleFonts.poppins(color: Colors.white),

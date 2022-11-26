@@ -179,7 +179,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.black,
+                                        color: MainScreenTheme.mainScreenBg == Colors.black ? Colors.black:Colors.black26,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Padding(
