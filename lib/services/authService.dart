@@ -116,9 +116,9 @@ class AuthService {
         await _fireStore.collection("users").doc(_auth.currentUser?.uid).update({
           "email":email
         });
-        showSnackBar(context, "Change Email link sent to $email\nPlease check spam folder of your email.", 1800,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo);
+        showSnackBar(context, "Your login email has been changed to $email.Please verify your new email to login.\nPlease check spam folder of your email.", 3800,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo);
       }on FirebaseAuthException catch(e){
-        showSnackBar(context, e.message.toString(), 2000);
+        showSnackBar(context, e.message.toString(), 3000);
       }
     }else{
       showSnackBar(context, "No changes made.", 1400,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo);

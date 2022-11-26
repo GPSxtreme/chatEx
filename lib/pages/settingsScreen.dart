@@ -1,6 +1,7 @@
 import 'package:chat_room/consts.dart';
 import 'package:chat_room/services/authService.dart';
 import 'package:chat_room/services/localDataService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -18,12 +19,16 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _auth = FirebaseAuth.instance;
   MainScreenTheme themeData = MainScreenTheme();
-
+  bool isInEmailEditMode = false;
+  String newUserEmail = "";
+  String userEmailFetched = "";
   @override
   void initState() {
     super.initState();
     themeData.addListener(themeListener);
+    userEmailFetched = _auth.currentUser?.email ?? "";
   }
 
   @override
@@ -167,17 +172,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             title: Text("Change password",style: GoogleFonts.poppins(color: Colors.white),),
                             onTap: ()async{
                               await AuthService.changeUserPassword();
-                              showSnackBar(context, "Password reset email sent\nPlease check spam folder of your email.", 1800,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo );
+                              showSnackBar(context, "Password reset email sent to $userEmailFetched\nPlease check spam folder of your email.", 3800,bgColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):Colors.indigo );
                             },
                           ),
                           ListTile(
                             leading: const Icon(Icons.email,color: Colors.white,size: 30,),
                             title: Text("Change email",style: GoogleFonts.poppins(color: Colors.white),),
                             onTap: ()async{
-                              String newEmail = "prudhvisuraaj@gmail.com";
-                              await AuthService.changeUserEmail(context , newEmail);
+                              if(!isInEmailEditMode){
+                                setState(() {
+                                  isInEmailEditMode = true;
+                                });
+                              }else{
+                                setState(() {
+                                  isInEmailEditMode = false;
+                                });
+                              }
                             },
-                          )
+                          ),
+                          if(isInEmailEditMode) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 7),
+                              child: TextFormField(
+                                cursorColor: Colors.white,
+                                initialValue: userEmailFetched,
+                                // controller: userNameController,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                textAlign: TextAlign.center,
+                                keyboardType:
+                                TextInputType.emailAddress,
+                                onChanged: (value) {
+                                  newUserEmail = value;
+                                },
+                                decoration:
+                                kMsgInputContainerDecoration.copyWith(
+                                    fillColor: Colors.white12,
+                                    prefixIcon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    suffixIcon: IconButton(onPressed: ()async{
+                                      if(newUserEmail.isEmpty){
+                                        newUserEmail = userEmailFetched;
+                                      }
+                                      userEmailFetched = newUserEmail;
+                                      await AuthService.changeUserEmail(context, userEmailFetched);
+                                    }, icon: const Icon(Icons.check,color: Colors.white,size: 30,))
+                                ),
+                              ),
+                            ),
+                          ]
                         ],
                       ),
                     ],
