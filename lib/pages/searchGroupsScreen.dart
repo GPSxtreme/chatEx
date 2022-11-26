@@ -49,10 +49,18 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
   fetchAllGroups()async{
     QuerySnapshot snapshot =  await _fireStore.collection("groups").get();
     for(var doc in snapshot.docs){
-      allGroups.add({
-        "grpName": doc.get("name"),
-        "grpId": doc.get("groupId")
-      });
+     try{
+       String groupName = doc.get("name");
+       String groupId = doc.get("groupId");
+       if(groupName.isNotEmpty&&groupId.isNotEmpty) {
+         allGroups.add({
+           "grpName": groupName,
+           "grpId": groupId
+         });
+       }
+     }catch(e){
+       continue;
+     }
     }
     setState(() {
       isLocalListLoading = false;
@@ -103,7 +111,7 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height*0.25,),
                 const CircularProgressIndicator(color: Colors.white,),
                 const SizedBox(height: 20,),
-                const Text("fetching groups..",style:TextStyle(color:Colors.white ))
+                Text("fetching groups..",style:GoogleFonts.poppins(color:Colors.white ))
               ],
             ),) : localListGroupTile()
           ],

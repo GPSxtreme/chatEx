@@ -18,7 +18,13 @@ class CloudStorageService {
   static Future removeCloudStorageFile(String filePath)async{
     await FirebaseStorage.instance.ref().child(filePath).delete();
   }
-
+  static Future updateGroupProfilePic(String groupId ,dynamic imagePath) async {
+    final _auth = FirebaseAuth.instance;
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child("groupProfilePictures/$groupId}.jpg");
+    await ref.putFile(File(imagePath));
+  }
   static Future updateUserProfilePic(dynamic imagePath) async {
     final _auth = FirebaseAuth.instance;
     Reference ref = FirebaseStorage.instance

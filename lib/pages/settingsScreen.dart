@@ -27,6 +27,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+    });
     themeData.addListener(themeListener);
     userEmailFetched = _auth.currentUser?.email ?? "";
   }
@@ -102,7 +104,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
                                     children: const [
                                       ThemeTile(
                                         tileColorHexCode: "501b23",
@@ -122,13 +123,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     height: 20,
                                   ),
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: const [
+                                      ThemeTile(
+                                        tileColorHexCode: "939c35",
+                                      ),
+                                      ThemeTile(
+                                        tileColorHexCode: "359c8b",
+                                      ),
+                                      ThemeTile(
+                                        tileColorHexCode: "9090f5",
+                                      ),
+                                      ThemeTile(
+                                        tileColorHexCode: "66b374",
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
                                         onPressed: () async{
                                           await LocalDataService.setUserTheme(SettingsScreen.selectedThemeColor);
-                                          ThemeDataService.setAppTheme(SettingsScreen.selectedThemeColor);
-                                          showSnackBar(context, "Theme set.\nRestart app to show changes", 2000,hexCode: SettingsScreen.selectedThemeColor);
+                                          await ThemeDataService.setAppTheme(SettingsScreen.selectedThemeColor);
+                                          await AuthService.pushMainScreenRoutine(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: MainScreenTheme.mainScreenBg,
@@ -146,8 +167,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         onPressed: () async{
                                           await LocalDataService.setUserTheme("");
                                           SettingsScreen.isAThemeTileActive = false;
-                                          ThemeDataService.resetToDark();
-                                          showSnackBar(context, "Default theme set.\nRestart app to show changes", 2000,bgColor:Colors.black);
+                                          await ThemeDataService.resetToDark();
+                                          await AuthService.pushMainScreenRoutine(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: MainScreenTheme.mainScreenBg,
@@ -291,8 +312,8 @@ class _ThemeTileState extends State<ThemeTile> {
         opacity: 1,
         spread: 1,
         child: Container(
-          width: 60,
-          height: 60,
+          width: 50,
+          height: 50,
           decoration: BoxDecoration(
               color: HexColor(widget.tileColorHexCode),
               borderRadius: BorderRadius.circular(100),

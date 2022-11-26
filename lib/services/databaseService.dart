@@ -120,5 +120,11 @@ class DatabaseService{
           .delete();
     }
   }
+  static Future kickGroupUser(String groupId,String userId)async{
+    final _fireStore = FirebaseFirestore.instance;
 
+    await _fireStore.collection("users").doc(userId).update({
+        "joinedGroups": FieldValue.arrayRemove([groupId])
+      });
+  }
 }

@@ -37,6 +37,8 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+    });
     themeData.addListener(themeListener);
     checkLocalProfilePicture();
   }
@@ -95,7 +97,7 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
     return Drawer(
         elevation: 10,
         width: MediaQuery.of(context).size.width * 0.8,
-        backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("222222"):MainScreenTheme.mainScreenBg,
+        backgroundColor: MainScreenTheme.mainScreenBg == Colors.black ? HexColor("111111"):MainScreenTheme.mainScreenBg,
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0),
           child: Column(
@@ -280,14 +282,14 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 leading: const Icon(
                   Icons.logout,
-                  color: Colors.red,
+                  color: Colors.white,
                   size: 30,
                 ),
                 title: Text(
                   "Logout",
                   style: GoogleFonts.poppins(
                       fontSize: 20,
-                      color: Colors.red,
+                      color: Colors.white,
                       fontWeight: FontWeight.w400),
                 ),
               ),

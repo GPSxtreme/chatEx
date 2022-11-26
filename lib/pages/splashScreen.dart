@@ -104,18 +104,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
           const Expanded(child: SizedBox()),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                "Made with 💖 by Prudhvi",
-                style: GoogleFonts.poppins(fontSize: 15, color: Colors.white),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-            ],
-          )
+          HelperFunctions.tradeMark()
         ],
       ),
     );
