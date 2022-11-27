@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void coRoutine() async {
     try {
       bool isOnline = await HelperFunctions.checkUserConnection();
-      await ThemeDataService.setUpAppThemes();
+      // await ThemeDataService.setUpAppThemes();
       if (isOnline) {
         bool isLoggedIn = _auth.currentUser != null ? true : false;
         Future.delayed(const Duration(milliseconds: 1400), () async {

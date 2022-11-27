@@ -3,6 +3,7 @@ import 'package:chat_room/services/authService.dart';
 import 'package:chat_room/pages/chatScreen.dart';
 import 'package:chat_room/pages/mainScreen.dart';
 import 'package:chat_room/pages/profileCreate.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -37,7 +38,7 @@ class _loginScreenState extends State<loginScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: HexColor("#090909"),
+      backgroundColor: MainScreenTheme.mainScreenBg,
       body: ModalProgressHUD(
         opacity: 0.18,
         inAsyncCall: showLoader,
@@ -208,7 +209,7 @@ class _loginScreenState extends State<loginScreen> {
                                 setState(() {
                                   showLoader = true;
                                 });
-                                AuthService.pushMainScreenRoutine(context);
+                                await AuthService.pushMainScreenRoutine(context);
                                 setState(() {
                                   showLoader = false;
                                 });

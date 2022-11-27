@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chat_room/consts.dart';
+import 'package:chat_room/services/themeDataService.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_room/pages/loginScreen.dart';
 import 'package:chat_room/pages/registrationScreen.dart';
@@ -21,7 +22,7 @@ class _welcomeScreenState extends State<welcomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: HexColor("#090909"),
+      backgroundColor: MainScreenTheme.mainScreenBg,
       body: Center(
           child:Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +64,8 @@ class _welcomeScreenState extends State<welcomeScreen> {
                 children: [
                   roundedBtn(title: 'Register', onPressed: (){
                     Navigator.pushNamed(context, regScreen.id);
-                  },),
+                  }),
+                  const SizedBox(height: 20,),
                   roundedBtn(title: 'Login', onPressed: (){
                     Navigator.pushNamed(context, loginScreen.id);
                   },),
