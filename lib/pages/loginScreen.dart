@@ -160,11 +160,11 @@ class _loginScreenState extends State<loginScreen> {
                     roundedBtn(
                       title: 'Login',
                       onPressed: () async {
-                        setState(() {
-                          showLoader = true;
-                        });
-                        final user = _auth.currentUser;
                         if (password.isNotEmpty && email.isNotEmpty) {
+                          setState(() {
+                            showLoader = true;
+                          });
+                          final user = _auth.currentUser;
                           if (_auth.currentUser != null) {
                             await _auth.currentUser!.reload();
                             if (user != null) {
