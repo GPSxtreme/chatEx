@@ -145,19 +145,16 @@ class _profileUserShowState extends State<profileUserShow> {
                               ),
                               if (!inEditMode) ...[
                                 if(!isMe) ...[
-                                  dataFetched["profileImgLink"].toString().isNotEmpty ?
+                                  dataFetched["profileImgLink"].toString().trim().isNotEmpty ?
                                   CircleAvatar(
                                     radius: 90,
                                     backgroundColor: Colors.white,
                                     backgroundImage: NetworkImage(dataFetched["profileImgLink"]),
                                   )
-                                      : const CircleAvatar(
+                                      : CircleAvatar(
                                     radius: 90,
                                     backgroundColor: Colors.white,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.blue,
-                                      strokeWidth: 10,
-                                    ),
+                                    child: Text(!isMe ? "Profile picture not available":"Please upload profile picture",style: GoogleFonts.poppins(color: MainScreenTheme.mainScreenBg),textAlign: TextAlign.center),
                                   ),
                                 ]
                                 else ...[

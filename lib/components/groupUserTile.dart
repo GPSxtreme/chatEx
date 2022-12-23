@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../services/themeDataService.dart';
+
 class GroupUserTile extends StatefulWidget {
   const GroupUserTile({Key? key, required this.userId, required this.groupId}) : super(key: key);
   final String userId;
@@ -44,19 +46,16 @@ class _GroupUserTileState extends State<GroupUserTile> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -1),
-                  leading: (userImgUrlFetched.isNotEmpty)
+                  leading: (userImgUrlFetched.trim().isNotEmpty)
                       ? CircleAvatar(
                       radius: 25,
                       backgroundColor: Colors.white,
                       backgroundImage: CachedNetworkImageProvider(userImgUrlFetched)
                   )
-                      : const CircleAvatar(
-                    radius: 35,
+                      :CircleAvatar(
+                    radius: 25,
                     backgroundColor: Colors.white,
-                    child: CircularProgressIndicator(
-                      color: Colors.blue,
-                      strokeWidth: 16,
-                    ),
+                    child: Icon(Icons.person,color: MainScreenTheme.mainScreenBg,size: 35,),
                   ),
                   title: Text(
                     userNameFetched,

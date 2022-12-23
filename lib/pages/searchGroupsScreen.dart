@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chat_room/components/groupSearchQueryTile.dart';
-import 'package:hexcolor/hexcolor.dart';
-
 
 class SearchGroupsScreen extends StatefulWidget {
   const SearchGroupsScreen({Key? key}) : super(key: key);
@@ -88,10 +86,10 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
                     setState(() {
                       query = val;
                     });
-                    localSearchGroup(val);
+                    localSearchGroup(val.trim());
                     },
                   onSubmitted: (val){
-                    localSearchGroup(val);
+                    localSearchGroup(val.trim());
                   },
                   cursorColor: Colors.white,
                   controller: searchController,
@@ -99,7 +97,7 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
                   decoration: kSearchGroupInputDecoration.copyWith(
                     suffixIcon: IconButton(icon: const Icon(Icons.search,color: Colors.white,),
                       onPressed: () {
-                        localSearchGroup(query);
+                        localSearchGroup(query.trim());
                       },
                     )
                   )
@@ -161,7 +159,7 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
   }
 
   void localSearchGroup(String query){
-    if(searchController.text.isEmpty){
+    if(searchController.text.trim().isEmpty){
       showGrpTiles = [];
       setState(() {
         hasUserSearched = false;
@@ -182,7 +180,7 @@ class _SearchGroupsScreenState extends State<SearchGroupsScreen> {
         });
       }else{
         List grpList = allGroups.where((grp){
-          final grpName = grp["grpName"].toString().toLowerCase();
+          final grpName = grp["grpName"].toString().toLowerCase().trim();
           final input = query.toLowerCase();
           if(input[0] == grpName[0]){
             if(query.length > 3){

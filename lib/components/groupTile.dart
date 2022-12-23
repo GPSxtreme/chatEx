@@ -123,7 +123,7 @@ class _GroupTileState extends State<GroupTile> {
                   ),
                   subtitle: Text(
                     "Created by: ${snapshot.data["createdBy"]}",
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 12),
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 11),
                   ),
                 ),
               )
