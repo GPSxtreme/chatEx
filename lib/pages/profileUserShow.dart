@@ -366,7 +366,7 @@ class _profileUserShowState extends State<profileUserShow> {
                                           ),
                                         ),
                                       )
-                                          : Text('" ${dataFetched["about"]} "',
+                                          : Text(dataFetched["about"].toString().trim(),
                                           style: GoogleFonts.poppins(
                                               color: Colors.white,
                                               fontSize: 20,

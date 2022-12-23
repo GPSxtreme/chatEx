@@ -232,6 +232,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 },
                                 decoration:
                                 kMsgInputContainerDecoration.copyWith(
+                                    border: null,
+                                    enabledBorder: null,
+                                    focusedBorder: null,
                                     fillColor: Colors.white12,
                                     prefixIcon: const Icon(
                                       Icons.edit,
